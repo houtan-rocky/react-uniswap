@@ -17,7 +17,8 @@ export function useTokenList() {
             UsdcTokenInfo,
           ]
         );
-      } catch (err) {
+      } catch (err: unknown) {
+        console.log(err);
         setError("Failed to load Polygon tokens");
       } finally {
         setLoading(false);

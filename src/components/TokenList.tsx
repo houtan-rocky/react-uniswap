@@ -53,14 +53,6 @@ export const TokenList: React.FC<TokenListProps> = ({
           >
             {token.logoURI && (
               <div className="relative h-[24px] me-5">
-                {token.symbol === "USDT" && (
-                  <img
-                    src={
-                      "https://polygonscan.com/token/images/polygonbridge_32.png"
-                    }
-                    className="absolute top-[-2px] right-[-2px] w-[10px] h-[10px]"
-                  />
-                )}
                 <img
                   src={token.logoURI}
                   alt={token.symbol}
