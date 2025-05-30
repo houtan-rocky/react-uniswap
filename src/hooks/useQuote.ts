@@ -5,7 +5,7 @@ import { readContract } from "@wagmi/core";
 import { useEffect } from "react";
 import { Address, encodePacked, formatUnits } from "viem";
 import { clientConfig } from "../components/Provider";
-import { USDT_TOKEN, QUOTER_CONTRACT_ADDRESS } from "../constants";
+import { QUOTER_CONTRACT_ADDRESS, VIRTUAL_PROTOCOL_TOKEN } from "../constants";
 import { SwapState } from "../types";
 import { fromReadableAmount } from "../utils/conversion";
 
@@ -44,11 +44,11 @@ export default function useQuote({ state, setState }: { state: SwapState; setSta
         );
         // Use USDT as the intermediary liquidity token.
         const INTERMEDIARY_TOKEN = new Token(
-          USDT_TOKEN.chainId,
-          USDT_TOKEN.address as Address,
-          USDT_TOKEN.decimals,
-          USDT_TOKEN.symbol,
-          USDT_TOKEN.name
+          VIRTUAL_PROTOCOL_TOKEN.chainId,
+          VIRTUAL_PROTOCOL_TOKEN.address as Address,
+          VIRTUAL_PROTOCOL_TOKEN.decimals,
+          VIRTUAL_PROTOCOL_TOKEN.symbol,
+          VIRTUAL_PROTOCOL_TOKEN.name
         );
         const OUT_TOKEN = new Token(
           state.outputToken.chainId,

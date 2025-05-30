@@ -4,14 +4,16 @@ import { useAccount } from "wagmi";
 import {
   DEFAULT_DEADLINE_MINUTES,
   DEFAULT_SLIPPAGE,
-  LRT_TOKEN,
-  USDT_TOKEN,
+  SOLACE_TOKEN,
+  VIRTUAL_PROTOCOL_TOKEN,
+  SolaceTokenInfo,
+  VritualProtocolTokenInfo,
 } from "../constants";
+import { getSellTokens, getBuyTokens, canChangeSellToken, canChangeBuyToken } from "../config/appConfig";
 import useBalances from "../hooks/useBalances";
 import useQuote from "../hooks/useQuote";
 import useSwap from "../hooks/useSwap";
-import { useTokenList } from "../hooks/useTokenList";
-import { SwapState } from "../types";
+import { SwapState, TokenWithInfo } from "../types";
 import { TokenList } from "./TokenList";
 import { IoMdArrowDown } from "react-icons/io";
 import { useAppKit } from "@reown/appkit/react";
@@ -22,8 +24,10 @@ const SwapWidget: React.FC = () => {
   const [state, setState] = useState<SwapState>({
     inputAmount: "",
     outputAmount: "",
-    inputToken: USDT_TOKEN,
-    outputToken: LRT_TOKEN,
+    inputToken: SOLACE_TOKEN,
+    outputToken: VIRTUAL_PROTOCOL_TOKEN,
+    inputTokenInfo: SolaceTokenInfo,
+    outputTokenInfo: VritualProtocolTokenInfo,
     slippage: DEFAULT_SLIPPAGE,
     deadline: DEFAULT_DEADLINE_MINUTES,
     loading: false,
@@ -37,7 +41,13 @@ const SwapWidget: React.FC = () => {
   const [showTokenList, setShowTokenList] = useState<"input" | "output" | null>(
     null
   );
-  const { tokens } = useTokenList();
+  
+  // Get token lists from configuration
+  const sellTokens = getSellTokens();
+  const buyTokens = getBuyTokens();
+  const allowSellChange = canChangeSellToken();
+  const allowBuyChange = canChangeBuyToken();
+  
   useQuote({ state, setState });
   const { swap } = useSwap({ state, setState });
   const { refreshBalances } = useBalances({ state, setState });
@@ -53,51 +63,103 @@ const SwapWidget: React.FC = () => {
     });
   };
 
+  // Handle input amount changes
+  const handleInputAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow empty string, valid numbers, and partial numbers (like "0.", ".")
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setState((prev) => ({ ...prev, inputAmount: value }));
+    }
+  };
+
+  // Handle input token selection with smart swapping
+  const handleInputTokenSelect = (tokenWithInfo: TokenWithInfo) => {
+    const selectedToken = tokenWithInfo.token;
+    const selectedTokenInfo = tokenWithInfo.info;
+    
+    // Check if the selected token is already the output token
+    if (state.outputToken && selectedToken.address.toLowerCase() === state.outputToken.address.toLowerCase()) {
+      // Swap the tokens: move current input to output, selected token to input
+      setState((prev) => ({
+        ...prev,
+        inputToken: selectedToken,
+        inputTokenInfo: selectedTokenInfo,
+        outputToken: prev.inputToken,
+        outputTokenInfo: prev.inputTokenInfo,
+      }));
+    } else {
+      // Normal selection
+      setState((prev) => ({
+        ...prev,
+        inputToken: selectedToken,
+        inputTokenInfo: selectedTokenInfo,
+      }));
+    }
+  };
+
+  // Handle output token selection with smart swapping
+  const handleOutputTokenSelect = (tokenWithInfo: TokenWithInfo) => {
+    const selectedToken = tokenWithInfo.token;
+    const selectedTokenInfo = tokenWithInfo.info;
+    
+    // Check if the selected token is already the input token
+    if (state.inputToken && selectedToken.address.toLowerCase() === state.inputToken.address.toLowerCase()) {
+      // Swap the tokens: move current output to input, selected token to output
+      setState((prev) => ({
+        ...prev,
+        outputToken: selectedToken,
+        outputTokenInfo: selectedTokenInfo,
+        inputToken: prev.outputToken,
+        inputTokenInfo: prev.outputTokenInfo,
+      }));
+    } else {
+      // Normal selection
+      setState((prev) => ({
+        ...prev,
+        outputToken: selectedToken,
+        outputTokenInfo: selectedTokenInfo,
+      }));
+    }
+  };
+
   return (
     <div className="relative w-full max-w-md bg-[#FCFAFE] p-2 rounded-xl">
       <div className="p-4 border border-[#EBEBEB] rounded-2xl relative">
         <label className="block text-gray-600 mb-2">Sell</label>
         <div className="flex items-center">
           <input
-            type="number"
+            key="sell-input"
+            type="text"
             value={state.inputAmount}
-            onChange={(e) =>
-              setState((prev) => ({ ...prev, inputAmount: e.target.value }))
-            }
+            onChange={handleInputAmountChange}
             className={`w-full bg-transparent text-2xl outline-none`}
             placeholder="0"
+            inputMode="decimal"
           />
           <div className="flex flex-col gap-2">
             <button
-              onClick={() => setShowTokenList("input")}
-              className="ml-2 p-2 py-0 border border-gray-200 bg-white rounded-full flex items-center gap-2 w-[110px]"
+              onClick={() => allowSellChange && setShowTokenList("input")}
+              disabled={!allowSellChange}
+              className={`ml-2 p-3 py-2 border border-gray-200 bg-white rounded-full flex items-center justify-center gap-2 min-w-[140px] ${
+                !allowSellChange ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'
+              }`}
             >
               {state.inputToken?.symbol && (
-                <div className="relative w-[100px] h-[24px]">
-                  {state.inputToken?.symbol === "USDT" && (
-                    <img
-                      src={
-                        "https://polygonscan.com/token/images/polygonbridge_32.png"
-                      }
-                      className="absolute top-[-2px] right-[-2px] w-[10px] h-[10px]"
-                    />
-                  )}
-                  <img
-                    src={
-                      tokens.find((t) => t.symbol === state.inputToken?.symbol)
-                        ?.logoURI
-                    }
-                    alt={state.inputToken?.symbol}
-                    className="h-[24px]"
-                  />
-                </div>
+                <img
+                  src={state.inputTokenInfo?.logoUrl}
+                  alt={state.inputToken?.symbol}
+                  className="h-[20px] w-[20px] flex-shrink-0 rounded-full"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
               )}
-              <span className="font-bold">
+              <span className="font-bold text-sm">
                 {state.inputToken?.symbol === "WMATIC"
                   ? "POL"
                   : state.inputToken?.symbol || "Select"}
               </span>
-              <FaChevronDown className="text-4xl" />
+              {allowSellChange && <FaChevronDown className="text-xs flex-shrink-0" />}
             </button>
             {isConnected && (
               <div className="flex justify-end">
@@ -128,12 +190,11 @@ const SwapWidget: React.FC = () => {
             )}
           </div>
         </div>
-        {showTokenList === "input" && (
+        {showTokenList === "input" && allowSellChange && (
           <TokenList
-            tokens={tokens}
-            onSelect={(token) =>
-              setState((prev) => ({ ...prev, inputToken: token }))
-            }
+            tokens={sellTokens}
+            listType="sell"
+            onSelect={handleInputTokenSelect}
             onClose={() => setShowTokenList(null)}
           />
         )}
@@ -162,22 +223,30 @@ const SwapWidget: React.FC = () => {
           />
           {isConnected && (
             <div className="flex flex-col gap-2">
-              <div className="ml-2 p-2 py-1 border-gray-200 bg-white rounded-full flex justify-center items-center gap-2 w-[90px]">
+              <button
+                onClick={() => allowBuyChange && setShowTokenList("output")}
+                disabled={!allowBuyChange}
+                className={`ml-2 p-3 py-2 border border-gray-200 bg-white rounded-full flex items-center justify-center gap-2 min-w-[140px] ${
+                  !allowBuyChange ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'
+                }`}
+              >
                 {state.outputToken?.symbol && (
                   <img
-                    src={
-                      "https://s2.coinmarketcap.com/static/img/coins/64x64/31463.png"
-                    }
+                    src={state.outputTokenInfo?.logoUrl}
                     alt={state.outputToken?.symbol}
-                    className="w[24px]- h-[24px]"
+                    className="h-[20px] w-[20px] flex-shrink-0 rounded-full"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
                   />
                 )}
-                <span className="font-bold">
+                <span className="font-bold text-sm">
                   {state.outputToken?.symbol === "WMATIC"
                     ? "POL"
                     : state.outputToken?.symbol || "Select"}
                 </span>
-              </div>
+                {allowBuyChange && <FaChevronDown className="text-xs flex-shrink-0" />}
+              </button>
               <div className="flex justify-end">
                 {state.balancesLoading ? (
                   <></>
@@ -195,6 +264,14 @@ const SwapWidget: React.FC = () => {
             </div>
           )}
         </div>
+        {showTokenList === "output" && allowBuyChange && (
+          <TokenList
+            tokens={buyTokens}
+            listType="buy"
+            onSelect={handleOutputTokenSelect}
+            onClose={() => setShowTokenList(null)}
+          />
+        )}
       </div>
 
       {state.error && (

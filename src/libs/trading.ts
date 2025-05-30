@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BigNumber, ethers } from "ethers";
 import { SwapAggregatorAbi } from "../contracts/SwapAggregatorAbi";
 

@@ -12,12 +12,9 @@ export * from './types';
 
 // Export commonly used constants
 export {
-  USDT_TOKEN,
-  LRT_TOKEN,
+  VIRTUAL_PROTOCOL_TOKEN,
   DEFAULT_SLIPPAGE,
   DEFAULT_DEADLINE_MINUTES,
-  UsdcTokenInfo,
-  UsdtTokenInfo,
-  PolTokenInfo,
-  lrtTokenInfo
+  VritualProtocolTokenInfo,
+  SolaceTokenInfo
 } from './constants'; 

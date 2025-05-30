@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { TokenInfo } from "../types";
-import { PolTokenInfo, UsdcTokenInfo, UsdtTokenInfo } from "../constants";
+import { SolaceTokenInfo, VritualProtocolTokenInfo } from "../constants";
 
 export function useTokenList() {
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
@@ -12,14 +12,13 @@ export function useTokenList() {
       try {
         setTokens(
           [
-            PolTokenInfo,
-            UsdtTokenInfo,
-            UsdcTokenInfo,
+            SolaceTokenInfo,
+            VritualProtocolTokenInfo,
           ]
         );
       } catch (err: unknown) {
         console.log(err);
-        setError("Failed to load Polygon tokens");
+        setError("Failed to load tokens");
       } finally {
         setLoading(false);
       }

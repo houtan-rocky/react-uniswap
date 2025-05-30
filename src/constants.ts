@@ -1,66 +1,78 @@
 import { Token } from "@uniswap/sdk-core";
 import { TokenInfo } from "./types";
 
-export const USDT_TOKEN = new Token(
-  137,
-  "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-  6,
-  "USDT",
-  "Tether USD"
+export const SOLACE_TOKEN = new Token(
+  8453,
+  "0x7d6fcB3327D7E17095fA8B0E3513AC7A3564f5E1",
+  18,
+  "SOLACE",
+  "Solace by Virtuals",
 );
 
-export const UsdcTokenInfo: TokenInfo = {
-  chainId: 137,
-  name: "USD Coin",
-  address: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-  symbol: "USDC",
-  decimals: 6,
-  logoURI: "https://cryptologos.cc/logos/usd-coin-usdc-logo.png",
-};
-
-export const UsdtTokenInfo: TokenInfo = {
-  chainId: 137,
-  name: "USDT",
-  address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-  symbol: "USDT",
-  decimals: 6,
-  logoURI: "https://cryptologos.cc/logos/tether-usdt-logo.png",
-};
-
-export const PolTokenInfo: TokenInfo = {
-  chainId: 137,
-  name: "Matic",
-  address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
-  symbol: "WMATIC",
-  decimals: 18,
-  logoURI: "https://cryptologos.cc/logos/polygon-matic-logo.png",
-};
-
-export const lrtTokenInfo: TokenInfo = {
-  chainId: 137,
-  name: "",
-  address: "0xfb7f8a2c0526d01bfb00192781b7a7761841b16c",
-  symbol: "LRT",
-  decimals: 18,
-  logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/31463.png",
-};
-
-export const MiddleToken: TokenInfo = {
-  name: "Wrapped Matic",
-  address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
-  symbol: "WMATIC",
-  decimals: 18,
-  chainId: 137,
-  logoURI: "https://cryptologos.cc/logos/polygon-matic-logo.png",
-};
-
-export const LRT_TOKEN = new Token(
-  lrtTokenInfo.chainId,
-  lrtTokenInfo.address,
-  lrtTokenInfo.decimals,
-  lrtTokenInfo.symbol,
-  lrtTokenInfo.name
+export const VIRTUAL_PROTOCOL_TOKEN = new Token(
+  8453,
+  "0x0b3e328455c4059EEb9e3f84b5543F74E24e7E1b",
+  18,
+  "VIRTUAL",
+  "Virtual Protocol"
 );
+
+export const VritualProtocolTokenInfo: TokenInfo = {
+  tokenId: "8453_0x0b3e328455c4059EEb9e3f84b5543F74E24e7E1b",
+  chainId: 8453,
+  address: "0x0b3e328455c4059EEb9e3f84b5543F74E24e7E1b",
+  decimals: 18,
+  symbol: "VIRTUAL",
+  name: "Virtual Protocol",
+  standard: "ERC20",
+  projectName: "Virtuals Protocol",
+  logoUrl:
+    "https://coin-images.coingecko.com/coins/images/34057/large/LOGOMARK.png?1708356054",
+  isSpam: "FALSE",
+  safetyLevel: "STRONG_WARNING",
+  feeData: {
+    sellFeeBps: "0",
+    buyFeeBps: "0",
+  },
+  protectionInfo: {
+    result: "Benign",
+    tokenId: "8453_0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+    chainId: 8453,
+    address: "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+    blockaidFees: null,
+    updatedAt: 1748582268,
+  },
+};
+// read from json all.json
+export const SolaceTokenInfo: TokenInfo = {
+  tokenId: "8453_0x7d6fcB3327D7E17095fA8B0E3513AC7A3564f5E1",
+  chainId: 8453,
+  address: "0x7d6fcB3327D7E17095fA8B0E3513AC7A3564f5E1",
+  decimals: 18,
+  symbol: "SOLACE",
+  name: "Solace by Virtuals",
+  standard: "ERC20",
+  projectName: "Solace",
+  logoUrl:
+    "https://coin-images.coingecko.com/coins/images/66174/large/solace_logo.jpg?1748565484",
+  isSpam: "FALSE",
+  safetyLevel: "STRONG_WARNING",
+  feeData: {
+    sellFeeBps: "0",
+    buyFeeBps: "0",
+  },
+  protectionInfo: {
+    result: "Benign",
+    tokenId: "8453_0x7d6fcb3327d7e17095fa8b0e3513ac7a3564f5e1",
+    chainId: 8453,
+    address: "0x7d6fcb3327d7e17095fa8b0e3513ac7a3564f5e1",
+    blockaidFees: {
+      buy: 0.01,
+      sell: 0.01,
+    },
+    updatedAt: 1748577080,
+  },
+};
 
 export const SWAP_ROUTER_ADDRESS = "0xec7BE89e9d109e7e3Fec59c222CF297125FEFda2";
 export const QUOTER_CONTRACT_ADDRESS =
