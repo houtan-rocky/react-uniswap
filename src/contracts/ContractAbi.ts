@@ -1,4 +1,4 @@
-export const LRTContractAbi = [
+export const ContractAbi = [
   {
     inputs: [
       {

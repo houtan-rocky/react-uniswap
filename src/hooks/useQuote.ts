@@ -4,7 +4,7 @@ import { FeeAmount } from "@uniswap/v3-sdk";
 import { readContract } from "@wagmi/core";
 import { useEffect } from "react";
 import { Address, encodePacked, formatUnits } from "viem";
-import { config } from "../components/Provider";
+import { clientConfig } from "../components/Provider";
 import { USDT_TOKEN, QUOTER_CONTRACT_ADDRESS } from "../constants";
 import { SwapState } from "../types";
 import { fromReadableAmount } from "../utils/conversion";
@@ -93,7 +93,7 @@ export default function useQuote({ state, setState }: { state: SwapState; setSta
 
         // Fetch quoted output amount using the Uniswap Quoter contract
         const quotedAmountOut = formatUnits(
-          (await readContract(config, {
+          (await readContract(clientConfig, {
             address: QUOTER_CONTRACT_ADDRESS,
             abi: QuoterABI.abi,
             functionName: "quoteExactInput",

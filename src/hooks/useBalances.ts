@@ -4,9 +4,9 @@ import { ethers, providers } from "ethers";
 import { useEffect } from "react";
 import { Address, formatUnits } from "viem";
 import { useAccount } from "wagmi";
-import { config } from "../components/Provider";
+import { clientConfig } from "../components/Provider";
 import { ERC20_ABI } from "../constants";
-import { LRTContractAbi } from "../contracts/LRTContractAbi";
+import { ContractAbi } from "../contracts/ContractAbi";
 import { getProvider } from "../libs/provider";
 import { toReadableAmount } from "../libs/utils";
 import { SwapState } from "../types";
@@ -55,9 +55,9 @@ export default function useBalances({
       address,
       state.inputToken
     );
-    const balanceOut = await readContract(config, {
+    const balanceOut = await readContract(clientConfig, {
       address: state.outputToken.address as Address,
-      abi: LRTContractAbi,
+      abi: ContractAbi,
       functionName: "balanceOf",
       args: [address],
     })
