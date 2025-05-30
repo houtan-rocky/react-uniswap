@@ -27,7 +27,7 @@ cp env.example .env
 2. Update the `.env` file with your configuration:
 ```bash
 # WalletConnect/AppKit Configuration
-VITE_PROJECT_ID=your_walletconnect_project_id_here
+VITE_REOWN_PROJECT_ID=your_walletconnect_project_id_here
 
 # App Metadata
 VITE_APP_NAME=Your App Name
@@ -84,7 +84,7 @@ function App() {
 
 The widget supports configuration through environment variables:
 
-- `VITE_PROJECT_ID`: WalletConnect project ID (required)
+- `VITE_REOWN_PROJECT_ID`: WalletConnect project ID (required)
 - `VITE_APP_NAME`: Your application name
 - `VITE_APP_DESCRIPTION`: Description shown in wallet prompts
 - `VITE_APP_URL`: Your application URL

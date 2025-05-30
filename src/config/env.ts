@@ -1,7 +1,7 @@
 // Environment configuration with fallback defaults
 export const config = {
   // WalletConnect/AppKit Configuration
-  projectId: import.meta.env.VITE_PROJECT_ID || '46709e61682756d28e52775aaec25fc8',
+  projectId: import.meta.env.VITE_REOWN_PROJECT_ID || 'a76ff31b5428ab5acc3b017e142d6365',
   
   // App Metadata
   appName: import.meta.env.VITE_APP_NAME || 'Uniswap Widget Package',
