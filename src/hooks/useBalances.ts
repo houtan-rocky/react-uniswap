@@ -1,13 +1,10 @@
 import { Currency } from "@uniswap/sdk-core";
-import { readContract } from "@wagmi/core";
-import { ethers, providers } from "ethers";
-import { useEffect } from "react";
-import { Address, formatUnits } from "viem";
+import { ethers } from "ethers";
+import { useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
-import { clientConfig } from "../components/Provider";
+import { RATE_LIMIT_CONFIG } from "../config/rateLimit";
 import { ERC20_ABI } from "../constants";
-import { ContractAbi } from "../contracts/ContractAbi";
-import { getProvider } from "../libs/provider";
+import { makeProviderRequest } from "../libs/provider";
 import { toReadableAmount } from "../libs/utils";
 import { SwapState } from "../types";
 
@@ -19,65 +16,98 @@ export default function useBalances({
   setState: React.Dispatch<React.SetStateAction<SwapState>>;
 }) {
   const { address } = useAccount();
+  const lastFetchRef = useRef<string>("");
 
   async function getCurrencyBalance(
-    provider: providers.Provider,
-    address: string,
+    chainId: number,
+    userAddress: string,
     currency: Currency
   ): Promise<string> {
-    setState((prev) => ({ ...prev, balancesLoading: true }));
     if (currency.isNative || currency.symbol === "WMATIC") {
-      return Number(
-        ethers.utils.formatEther(await provider.getBalance(address))
-      ).toFixed(3);
+      return makeProviderRequest(
+        chainId,
+        `balance-native-${userAddress}`,
+        async (provider) => {
+          const balance = await provider.getBalance(userAddress);
+          return Number(ethers.utils.formatEther(balance)).toFixed(3);
+        }
+      );
     }
-    const ERC20Contract = new ethers.Contract(
-      currency.address,
-      ERC20_ABI,
-      provider
-    );
-    const balance: number = await ERC20Contract.balanceOf(address);
-    const decimals: number = await ERC20Contract.decimals();
 
-    return toReadableAmount(balance, decimals);
+    return makeProviderRequest(
+      chainId,
+      `balance-erc20-${currency.address}-${userAddress}`,
+      async (provider) => {
+        const ERC20Contract = new ethers.Contract(
+          currency.address,
+          ERC20_ABI,
+          provider
+        );
+        const [balance, decimals] = await Promise.all([
+          ERC20Contract.balanceOf(userAddress),
+          ERC20Contract.decimals(),
+        ]);
+        return toReadableAmount(balance, decimals);
+      }
+    );
   }
 
   const refreshBalances = async () => {
-    const provider = getProvider();
-    if (!address || !provider) {
+    if (!address) {
       return;
     }
     if (!state.inputToken || !state.outputToken) {
       return;
     }
-    const balanceIn = await getCurrencyBalance(
-      provider,
-      address,
-      state.inputToken
-    );
-    const balanceOut = await readContract(clientConfig, {
-      address: state.outputToken.address as Address,
-      abi: ContractAbi,
-      functionName: "balanceOf",
-      args: [address],
-    })
-      .then((res: bigint) => formatUnits(res, 18))
-      .then((res: string) => Number(res).toFixed(3));
-    setState((prev) => ({
-      ...prev,
-      balanceIn,
-    }));
-    setState((prev) => ({
-      ...prev,
-      balanceOut,
-    }));
-    setState((prev) => ({ ...prev, balancesLoading: false }));
+
+    // Create a unique key for this balance fetch to avoid duplicate calls
+    const fetchKey = `${address}-${state.inputToken.address}-${state.outputToken.address}`;
+    if (lastFetchRef.current === fetchKey) {
+      return; // Skip if we just fetched the same balances
+    }
+    lastFetchRef.current = fetchKey;
+
+    setState((prev) => ({ ...prev, balancesLoading: true }));
+
+    try {
+      // Fetch both balances in parallel with rate limiting
+      const [balanceIn, balanceOut] = await Promise.all([
+        getCurrencyBalance(
+          state.inputToken.chainId,
+          address,
+          state.inputToken
+        ),
+        getCurrencyBalance(
+          state.outputToken.chainId,
+          address,
+          state.outputToken
+        ),
+      ]);
+
+      setState((prev) => ({
+        ...prev,
+        balanceIn,
+        balanceOut,
+        balancesLoading: false,
+      }));
+    } catch (error) {
+      console.error("Error fetching balances:", error);
+      setState((prev) => ({
+        ...prev,
+        balanceIn: "0.000",
+        balanceOut: "0.000", 
+        balancesLoading: false,
+      }));
+    }
   };
+
   useEffect(() => {
     if (address) {
-      refreshBalances();
+      // Use centralized debounce configuration
+      const timeoutId = setTimeout(refreshBalances, RATE_LIMIT_CONFIG.BALANCE_DEBOUNCE);
+      return () => clearTimeout(timeoutId);
     }
-  }, [address, state.inputToken, state.outputToken]);
+  }, [address, state.inputToken?.address, state.outputToken?.address]);
 
   return { refreshBalances };
 }

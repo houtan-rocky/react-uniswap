@@ -1,4 +1,5 @@
 import { useCallback, useState, useRef } from "react";
+import { RATE_LIMIT_CONFIG } from "../config/rateLimit";
 import { TokenInfo, UniswapSearchResponse, UniswapSearchTokenResponse } from "../types";
 
 export function useTokenSearch() {
@@ -47,7 +48,7 @@ export function useTokenSearch() {
       return [];
     }
 
-    // Set up debounced search
+    // Set up debounced search using centralized configuration
     return new Promise((resolve) => {
       debounceTimerRef.current = setTimeout(async () => {
         setSearching(true);
@@ -68,7 +69,7 @@ export function useTokenSearch() {
               },
               body: JSON.stringify({
                 searchQuery: query.trim(),
-                chainIds: [1, 130, 137, 42161, 10, 8453, 56, 81457, 43114, 42220, 480, 1868, 7777777, 324], // Multiple chains
+                chainIds: [8453], // Base chain only
                 searchType: "TOKEN",
                 page: 1,
                 size: 15
@@ -90,10 +91,8 @@ export function useTokenSearch() {
           const data: UniswapSearchResponse = await response.json();
           const uniswapTokens = data.tokens || [];
           
-          // Convert to our TokenInfo format and filter out spam tokens
-          const results = uniswapTokens
-            .filter(token => token.isSpam !== "TRUE") // Filter out spam tokens
-            .map(convertToTokenInfo);
+          // Convert to our TokenInfo format without filtering spam tokens
+          const results = uniswapTokens.map(convertToTokenInfo);
           
           // Only update state if this request wasn't aborted
           if (!abortController.signal.aborted) {
@@ -125,7 +124,7 @@ export function useTokenSearch() {
             currentAbortControllerRef.current = null;
           }
         }
-      }, 300); // 300ms debounce
+      }, RATE_LIMIT_CONFIG.SEARCH_DEBOUNCE); // Use centralized configuration
     });
   }, []);
 

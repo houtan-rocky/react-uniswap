@@ -84,7 +84,7 @@ export const TokenList: React.FC<TokenListProps> = ({
         ) : (
           displayTokens.map((tokenInfo) => {
             // Use logoUrl first, fallback to logoURI for compatibility
-            const logoSrc = tokenInfo.logoUrl;
+            const logoSrc = tokenInfo.logoUrl || tokenInfo.logoURI;
             
             return (
               <button
@@ -125,6 +125,16 @@ export const TokenList: React.FC<TokenListProps> = ({
                   </div>
                   <div className="text-sm text-gray-500">{tokenInfo.name}</div>
                   <div className="text-xs text-gray-400">{tokenInfo.address}</div>
+                  {tokenInfo.isSpam === "TRUE" && (
+                    <div className="text-xs text-red-500 mt-1">
+                      ⚠️ Warning: This token has been marked as spam
+                    </div>
+                  )}
+                  {tokenInfo.safetyLevel === "STRONG_WARNING" && (
+                    <div className="text-xs text-orange-500 mt-1">
+                      ⚠️ Exercise caution with this token
+                    </div>
+                  )}
                 </div>
               </button>
             );

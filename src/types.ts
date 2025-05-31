@@ -1,4 +1,5 @@
 import { Token } from "@uniswap/sdk-core";
+import { FeeAmount } from "@uniswap/v3-sdk";
 
 declare global {
   interface Window {
@@ -84,6 +85,14 @@ export interface AppConfig {
   buyTokens: TokenInfo[];
 }
 
+export interface SwapRouteInfo {
+  isDirectRoute: boolean;
+  directFee?: FeeAmount;
+  firstLegFee?: FeeAmount;
+  secondLegFee?: FeeAmount;
+  intermediaryToken?: string;
+}
+
 export interface SwapState {
   inputAmount: string;
   outputAmount: string;
@@ -100,4 +109,5 @@ export interface SwapState {
   balanceIn: string;
   balanceOut: string;
   balancesLoading: boolean;
+  routeInfo?: SwapRouteInfo;
 }

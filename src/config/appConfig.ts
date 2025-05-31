@@ -1,5 +1,11 @@
 import { AppConfig } from "../types";
-import { SolaceTokenInfo, VritualProtocolTokenInfo } from "../constants";
+import { 
+  SolaceTokenInfo, 
+  VirtualProtocolTokenInfo, 
+  VDNTTokenInfo,
+  WETHTokenInfo,
+  USDCTokenInfo
+} from "../constants";
 
 /**
  * App Configuration
@@ -25,15 +31,19 @@ export const appConfig: AppConfig = {
   // Available tokens for selling
   sellTokens: [
     SolaceTokenInfo,
-    VritualProtocolTokenInfo,
-    // Add more sell tokens here
+    VirtualProtocolTokenInfo,
+    VDNTTokenInfo,
+    WETHTokenInfo,
+    USDCTokenInfo,
   ],
 
   // Available tokens for buying  
   buyTokens: [
     SolaceTokenInfo,
-    VritualProtocolTokenInfo,
-    // Add more buy tokens here
+    VirtualProtocolTokenInfo,
+    VDNTTokenInfo,
+    WETHTokenInfo,
+    USDCTokenInfo,
   ],
 };
 

@@ -9,10 +9,16 @@ import {
   SolaceTokenInfo,
   VritualProtocolTokenInfo,
 } from "../constants";
-import { getSellTokens, getBuyTokens, canChangeSellToken, canChangeBuyToken } from "../config/appConfig";
+import {
+  getSellTokens,
+  getBuyTokens,
+  canChangeSellToken,
+  canChangeBuyToken,
+} from "../config/appConfig";
 import useBalances from "../hooks/useBalances";
 import useQuote from "../hooks/useQuote";
 import useSwap from "../hooks/useSwap";
+import { formatFeeDisplay } from "../libs/dynamicFees";
 import { SwapState, TokenWithInfo } from "../types";
 import { TokenList } from "./TokenList";
 import { IoMdArrowDown } from "react-icons/io";
@@ -41,13 +47,13 @@ const SwapWidget: React.FC = () => {
   const [showTokenList, setShowTokenList] = useState<"input" | "output" | null>(
     null
   );
-  
+
   // Get token lists from configuration
   const sellTokens = getSellTokens();
   const buyTokens = getBuyTokens();
   const allowSellChange = canChangeSellToken();
   const allowBuyChange = canChangeBuyToken();
-  
+
   useQuote({ state, setState });
   const { swap } = useSwap({ state, setState });
   const { refreshBalances } = useBalances({ state, setState });
@@ -76,9 +82,20 @@ const SwapWidget: React.FC = () => {
   const handleInputTokenSelect = (tokenWithInfo: TokenWithInfo) => {
     const selectedToken = tokenWithInfo.token;
     const selectedTokenInfo = tokenWithInfo.info;
-    
+
+    console.log("Input token selected:", {
+      token: selectedToken,
+      info: selectedTokenInfo,
+      logoUrl: selectedTokenInfo.logoUrl,
+      logoURI: selectedTokenInfo.logoURI
+    });
+
     // Check if the selected token is already the output token
-    if (state.outputToken && selectedToken.address.toLowerCase() === state.outputToken.address.toLowerCase()) {
+    if (
+      state.outputToken &&
+      selectedToken.address.toLowerCase() ===
+        state.outputToken.address.toLowerCase()
+    ) {
       // Swap the tokens: move current input to output, selected token to input
       setState((prev) => ({
         ...prev,
@@ -101,9 +118,20 @@ const SwapWidget: React.FC = () => {
   const handleOutputTokenSelect = (tokenWithInfo: TokenWithInfo) => {
     const selectedToken = tokenWithInfo.token;
     const selectedTokenInfo = tokenWithInfo.info;
-    
+
+    console.log("Output token selected:", {
+      token: selectedToken,
+      info: selectedTokenInfo,
+      logoUrl: selectedTokenInfo.logoUrl,
+      logoURI: selectedTokenInfo.logoURI
+    });
+
     // Check if the selected token is already the input token
-    if (state.inputToken && selectedToken.address.toLowerCase() === state.inputToken.address.toLowerCase()) {
+    if (
+      state.inputToken &&
+      selectedToken.address.toLowerCase() ===
+        state.inputToken.address.toLowerCase()
+    ) {
       // Swap the tokens: move current output to input, selected token to output
       setState((prev) => ({
         ...prev,
@@ -141,16 +169,22 @@ const SwapWidget: React.FC = () => {
               onClick={() => allowSellChange && setShowTokenList("input")}
               disabled={!allowSellChange}
               className={`ml-2 p-3 py-2 border border-gray-200 bg-white rounded-full flex items-center justify-center gap-2 min-w-[140px] ${
-                !allowSellChange ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'
+                !allowSellChange
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-50 cursor-pointer"
               }`}
             >
               {state.inputToken?.symbol && (
                 <img
-                  src={state.inputTokenInfo?.logoUrl}
+                  src={state.inputTokenInfo?.logoUrl || state.inputTokenInfo?.logoURI || ""}
                   alt={state.inputToken?.symbol}
                   className="h-[20px] w-[20px] flex-shrink-0 rounded-full"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
+                    console.log("Input token logo failed to load:", state.inputTokenInfo?.logoUrl);
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                  onLoad={() => {
+                    console.log("Input token logo loaded successfully:", state.inputTokenInfo?.logoUrl);
                   }}
                 />
               )}
@@ -159,7 +193,9 @@ const SwapWidget: React.FC = () => {
                   ? "POL"
                   : state.inputToken?.symbol || "Select"}
               </span>
-              {allowSellChange && <FaChevronDown className="text-xs flex-shrink-0" />}
+              {allowSellChange && (
+                <FaChevronDown className="text-xs flex-shrink-0" />
+              )}
             </button>
             {isConnected && (
               <div className="flex justify-end">
@@ -214,39 +250,47 @@ const SwapWidget: React.FC = () => {
             value={
               state.loading
                 ? "Fetching Quotes"
-                : Number(state.outputAmount).toFixed(3)
+                : Number(state.outputAmount).toFixed(12)
             }
             readOnly
             disabled={state.loading}
             className="w-full bg-transparent text-2xl outline-none opacity-80 disabled:opacity-30 disabled:text-lg"
             placeholder="0"
           />
-          {isConnected && (
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => allowBuyChange && setShowTokenList("output")}
-                disabled={!allowBuyChange}
-                className={`ml-2 p-3 py-2 border border-gray-200 bg-white rounded-full flex items-center justify-center gap-2 min-w-[140px] ${
-                  !allowBuyChange ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'
-                }`}
-              >
-                {state.outputToken?.symbol && (
-                  <img
-                    src={state.outputTokenInfo?.logoUrl}
-                    alt={state.outputToken?.symbol}
-                    className="h-[20px] w-[20px] flex-shrink-0 rounded-full"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
-                )}
-                <span className="font-bold text-sm">
-                  {state.outputToken?.symbol === "WMATIC"
-                    ? "POL"
-                    : state.outputToken?.symbol || "Select"}
-                </span>
-                {allowBuyChange && <FaChevronDown className="text-xs flex-shrink-0" />}
-              </button>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => allowBuyChange && setShowTokenList("output")}
+              disabled={!allowBuyChange}
+              className={`ml-2 p-3 py-2 border border-gray-200 bg-white rounded-full flex items-center justify-center gap-2 min-w-[140px] ${
+                !allowBuyChange
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-50 cursor-pointer"
+              }`}
+            >
+              {state.outputToken?.symbol && (
+                <img
+                  src={state.outputTokenInfo?.logoUrl || state.outputTokenInfo?.logoURI || ""}
+                  alt={state.outputToken?.symbol}
+                  className="h-[20px] w-[20px] flex-shrink-0 rounded-full"
+                  onError={(e) => {
+                    console.log("Output token logo failed to load:", state.outputTokenInfo?.logoUrl);
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                  onLoad={() => {
+                    console.log("Output token logo loaded successfully:", state.outputTokenInfo?.logoUrl);
+                  }}
+                />
+              )}
+              <span className="font-bold text-sm">
+                {state.outputToken?.symbol === "WMATIC"
+                  ? "POL"
+                  : state.outputToken?.symbol || "Select"}
+              </span>
+              {allowBuyChange && (
+                <FaChevronDown className="text-xs flex-shrink-0" />
+              )}
+            </button>
+            {isConnected && (
               <div className="flex justify-end">
                 {state.balancesLoading ? (
                   <></>
@@ -261,8 +305,8 @@ const SwapWidget: React.FC = () => {
                   </div>
                 )}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
         {showTokenList === "output" && allowBuyChange && (
           <TokenList
@@ -317,17 +361,49 @@ const SwapWidget: React.FC = () => {
         state.inputAmount &&
         state.outputAmount && (
           <div className="p-4 rounded-2xl">
-            <div className="flex justify-between items-center text-sm text-[#7d7d7d]">
+            <div className="flex justify-between items-center text-sm text-[#7d7d7d] mb-2">
               1{" "}
               {state.inputToken.symbol === "WMATIC"
                 ? "POL"
                 : state.inputToken.symbol}{" "}
               ={" "}
               {(Number(state.outputAmount) / Number(state.inputAmount)).toFixed(
-                3
+                12
               )}{" "}
               {state.outputToken.symbol}
             </div>
+            
+            {/* Fee Information */}
+            {state.routeInfo && (
+              <div className="mt-2 text-xs text-gray-500">
+                {state.routeInfo.isDirectRoute ? (
+                  <div className="flex justify-between">
+                    <span>Direct swap fee:</span>
+                    <span className="font-medium">
+                      {state.routeInfo.directFee ? formatFeeDisplay(state.routeInfo.directFee) : "0.3%"}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <div className="flex justify-between">
+                      <span>Route: {state.inputToken.symbol} → {state.routeInfo.intermediaryToken} → {state.outputToken.symbol}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>First leg fee:</span>
+                      <span className="font-medium">
+                        {state.routeInfo.firstLegFee ? formatFeeDisplay(state.routeInfo.firstLegFee) : "0.3%"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Second leg fee:</span>
+                      <span className="font-medium">
+                        {state.routeInfo.secondLegFee ? formatFeeDisplay(state.routeInfo.secondLegFee) : "0.3%"}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 

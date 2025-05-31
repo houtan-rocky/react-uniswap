@@ -1,6 +1,6 @@
 'use client';
 
-import { polygon, base, arbitrum, optimism, avalanche, gnosis, zora, celo } from '@reown/appkit/networks';
+import { base } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider, type Config } from 'wagmi';
@@ -9,17 +9,13 @@ import { CreateConnectorFn } from 'wagmi';
 import config from '../config/env';
 
 export const projectId = config.projectId;
-export const connectors: CreateConnectorFn[] = [];
+
 export const networks = [
-   polygon,
    base,
-   arbitrum,
-   optimism,
-   avalanche,
-   gnosis,
-   zora,
-   celo,
 ];
+
+const connectors: CreateConnectorFn[] = [];
+
 export const wagmiAdapter = new WagmiAdapter({
    projectId,
    connectors,
@@ -40,8 +36,8 @@ const metadata = {
 createAppKit({
    adapters: [wagmiAdapter],
    projectId,
-   networks: [polygon],
-   defaultNetwork: polygon,
+   networks: [base],
+   defaultNetwork: base,
    metadata: metadata,
    features: {
       analytics: true,
