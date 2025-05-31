@@ -30,8 +30,8 @@ export interface TokenInfo {
     chainId: number;
     address: string;
     blockaidFees: {
-      buy: number;
-      sell: number;
+      buy?: number;
+      sell?: number;
     } | null;
     updatedAt: number;
   };
