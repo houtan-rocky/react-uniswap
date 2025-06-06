@@ -1,4 +1,4 @@
-import { Currency } from "@uniswap/sdk-core";
+import { Currency, Token } from "@uniswap/sdk-core";
 import { ethers } from "ethers";
 import { useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
@@ -6,7 +6,10 @@ import { RATE_LIMIT_CONFIG } from "../config/rateLimit";
 import { ERC20_ABI } from "../constants";
 import { makeProviderRequest } from "../libs/provider";
 import { toReadableAmount } from "../libs/utils";
-import { SwapState } from "../types";
+import { SwapState, TokenInfo } from "../types";
+
+const tokenInfoToToken = (info: TokenInfo): Token => 
+  new Token(info.chainId, info.address, info.decimals, info.symbol, info.name);
 
 export default function useBalances({
   state,
@@ -74,13 +77,13 @@ export default function useBalances({
       const [balanceIn, balanceOut] = await Promise.all([
         getCurrencyBalance(
           state.inputToken.chainId,
-      address,
-      state.inputToken
+          address,
+          tokenInfoToToken(state.inputToken)
         ),
         getCurrencyBalance(
           state.outputToken.chainId,
           address,
-          state.outputToken
+          tokenInfoToToken(state.outputToken)
         ),
       ]);
 

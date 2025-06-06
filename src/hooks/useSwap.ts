@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import { TokenSwapper } from "../libs/trading";
 import { SwapState } from "../types";
 
@@ -8,16 +7,17 @@ export default function useSwap({ state, setState }: { state: SwapState; setStat
     setState((prev) => ({ ...prev, txLoading: true }));
     const swapper = new TokenSwapper(
       state.inputToken?.address as string,
-      state.outputToken?.address as string,
-      state.inputToken?.symbol === "WMATIC"
+      state.outputToken?.address as string
     );
     try {
       console.log("Initial Token in balance:", await swapper.getTokenInBalance());
       console.log("Initial Token Out balance:", await swapper.getTokenOutBalance());
 
+      const signer = await swapper.getSignerAddress();
       await swapper.executeSwap(
-        ethers.utils.parseUnits(state.inputAmount.toString(), state.inputToken?.decimals as number),
-        ethers.utils.parseUnits(state.outputAmount.toString(), state.outputToken?.decimals as number),
+        state.inputAmount,
+        state.outputAmount,
+        signer,
       );
     } catch (error) {
       console.error("Error in main:", error);

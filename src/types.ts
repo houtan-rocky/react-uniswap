@@ -14,6 +14,27 @@ export interface TokenInfo {
   symbol: string;
   name: string;
   logoURI: string;
+  logoUrl?: string;
+  tokenId?: string;
+  standard?: string;
+  projectName?: string;
+  isSpam?: string;
+  safetyLevel?: string;
+  feeData?: {
+    sellFeeBps: string;
+    buyFeeBps: string;
+  };
+  protectionInfo?: {
+    result: string;
+    tokenId: string;
+    chainId: number;
+    address: string;
+    blockaidFees: {
+      buy?: number;
+      sell?: number;
+    } | null;
+    updatedAt: number;
+  };
 }
 
 // Types for Uniswap Search API
@@ -95,10 +116,14 @@ export interface SwapState {
 }
 
 export interface SwapProps {
-  poolConfig: {
-    tokenIn: TokenInfo;
-    tokenOut: TokenInfo;
-    poolAddress: string;
+  poolConfig: PoolConfig;
+  allowTokenChange?: boolean;
+  onTokenSelect?: (tokenType: 'input' | 'output', token: TokenInfo) => void;
+  onAmountChange?: (amount: string, tokenType: 'input' | 'output') => void;
+  onSwap?: (inputAmount: string, outputAmount: string) => Promise<void>;
+  customTokenList?: TokenInfo[];
+  searchConfig?: {
+    enabled: boolean;
+    chainIds?: number[];
   };
-  allowInputTokenChange?: boolean;
 }

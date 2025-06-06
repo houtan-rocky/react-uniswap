@@ -25,7 +25,7 @@ export function useTokenSearch() {
     isSpam: uniswapToken.isSpam,
     safetyLevel: uniswapToken.safetyLevel,
     tokenId: uniswapToken.tokenId,
-    logoUrl: uniswapToken.logoUrl || "",
+    logoURI: uniswapToken.logoUrl || "",
   });
 
   const searchTokens = useCallback(async (query: string): Promise<TokenInfo[]> => {

@@ -1,12 +1,68 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import Providers from "./components/Provider";
 import SwapWidget from "./components/SwapWidget";
+import { TokenInfo } from "./types";
+
+// const SOLACE_TOKEN = {
+//   chainId: 8453,
+//   address: "0x7d6fcB3327D7E17095fA8B0E3513AC7A3564f5E1",
+//   decimals: 18,
+//   symbol: "SOLACE",
+//   name: "Solace by Virtuals",
+//   logoURI:
+//     "https://assets.coingecko.com/coins/images/32849/standard/solace_logo_256.png",
+//   standard: "ERC20",
+//   projectName: "Solace",
+// } as TokenInfo;
+
+const HOLY_TOKEN = {
+  chainId: 8453,
+  address: "0x567cb27139Bcc6C3617636CB4F882564a91D6E10",
+  decimals: 18,
+  symbol: "HOLY",
+  name: "Holy",
+  logoURI:
+    "https://assets.coingecko.com/coins/images/32849/standard/solace_logo_256.png",
+  standard: "ERC20",
+  projectName: "Holy",
+};
+// Example production configuration
+const poolConfig = {
+  tokenIn: {
+    chainId: 8453,
+    address: "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+    decimals: 18,
+    symbol: "VIRTUAL",
+    name: "Virtual Protocol",
+    logoURI:
+      "https://assets.coingecko.com/coins/images/33154/standard/256x256_mark.png",
+    standard: "ERC20",
+    projectName: "Virtuals Protocol",
+  } as TokenInfo,
+  tokenOut: HOLY_TOKEN as TokenInfo,
+  poolAddress: "0xbe5830E1E192150445fF224C0Ec8113d04F1085d",
+  version: "V2" as const,
+};
 
 const App: React.FC = () => {
+  const handleSwap = async (inputAmount: string, outputAmount: string) => {
+    console.log("Custom swap handler:", { inputAmount, outputAmount });
+    // Add your custom swap logic here
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Providers>
-        <SwapWidget />
+        <SwapWidget
+          poolConfig={poolConfig}
+          allowTokenChange={true}
+          onSwap={handleSwap}
+          searchConfig={{
+            enabled: true,
+            chainIds: [8453], // Base chain
+          }}
+        />
       </Providers>
     </div>
   );

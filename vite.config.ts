@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -68,5 +69,25 @@ export default defineConfig({
         }
       }
     }
+  },
+  build: {
+    lib: {
+      entry: resolve(__dirname, 'src/index.ts'),
+      name: 'UniswapWidget',
+      fileName: (format) => `index.${format}.js`,
+      formats: ['es', 'umd']
+    },
+    rollupOptions: {
+      external: ['react', 'react-dom', 'next'],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          next: 'Next'
+        }
+      }
+    },
+    sourcemap: true,
+    minify: 'terser'
   }
 })

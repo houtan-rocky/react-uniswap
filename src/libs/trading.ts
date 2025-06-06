@@ -57,12 +57,9 @@ export class TokenSwapper {
       this.tokenOutAddress = toChecksumAddress(tokenOutAddress);
     } else if (typeof tokenInAddressOrConfig === "object") {
       const config = tokenInAddressOrConfig as PoolConfig;
-      this.tokenInAddress = toChecksumAddress("0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b"); // VIRTUAL
-      this.tokenOutAddress = toChecksumAddress("0x7d6fcB3327D7E17095fA8B0E3513AC7A3564f5E1"); // SOLACE
-      this.poolConfig = {
-        ...config,
-        poolAddress: "0x912567c105A172777e56411DD0AA4Acc10e628a9"
-      };
+      this.tokenInAddress = toChecksumAddress(config.tokenIn.address);
+      this.tokenOutAddress = toChecksumAddress(config.tokenOut.address);
+      this.poolConfig = config;
     } else {
       throw new Error("Invalid constructor arguments");
     }

@@ -70,12 +70,16 @@ export const VIRTUAL_PROTOCOL_TOKEN = VIRTUAL_TOKEN;
 
 // Uniswap V3 contracts on Base
 export const SWAP_ROUTER_ADDRESS = "0x2626664c2603336E57B271c5C0b26F421741e481";
-export const QUOTER_CONTRACT_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
-export const POOL_FACTORY_CONTRACT_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
+export const QUOTER_CONTRACT_ADDRESS =
+  "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
+export const POOL_FACTORY_CONTRACT_ADDRESS =
+  "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 
 // Uniswap V2 contracts on Base
-export const UNISWAP_V2_FACTORY_ADDRESS = "0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6";
-export const UNISWAP_V2_ROUTER_ADDRESS = "0x4752ba5dbc23f44d87826276bf6fd6b1c372ad24";
+export const UNISWAP_V2_FACTORY_ADDRESS =
+  "0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6";
+export const UNISWAP_V2_ROUTER_ADDRESS =
+  "0x4752ba5dbc23f44d87826276bf6fd6b1c372ad24";
 
 export const DEFAULT_SLIPPAGE = 0.5;
 export const DEFAULT_DEADLINE_MINUTES = 20;
@@ -105,7 +109,7 @@ export const UNISWAP_V2_ROUTER_ABI = [
   "function factory() external pure returns (address)",
 ];
 
-// Uniswap V2 Factory ABI  
+// Uniswap V2 Factory ABI
 export const UNISWAP_V2_FACTORY_ABI = [
   "function getPair(address tokenA, address tokenB) external view returns (address pair)",
 ];
@@ -142,6 +146,7 @@ interface TokenInfo {
     blockaidFees: { buy?: number; sell?: number } | null;
     updatedAt: number;
   };
+  logoURI: string;
 }
 
 // Verified TokenInfo objects
@@ -170,6 +175,8 @@ export const VirtualProtocolTokenInfo: TokenInfo = {
     blockaidFees: null,
     updatedAt: 1748582268,
   },
+  logoURI:
+    "https://assets.coingecko.com/coins/images/33154/standard/256x256_mark.png",
 };
 
 export const SolaceTokenInfo: TokenInfo = {
@@ -200,6 +207,8 @@ export const SolaceTokenInfo: TokenInfo = {
     },
     updatedAt: 1748577080,
   },
+  logoURI:
+    "https://assets.coingecko.com/coins/images/32849/standard/solace_logo_256.png",
 };
 
 export const VDNTTokenInfo: TokenInfo = {
@@ -211,7 +220,8 @@ export const VDNTTokenInfo: TokenInfo = {
   name: "Verdant",
   standard: "ERC20",
   projectName: "Verdant",
-  logoUrl: "https://coin-images.coingecko.com/coins/images/34057/large/LOGOMARK.png?1708356054",
+  logoUrl:
+    "https://coin-images.coingecko.com/coins/images/34057/large/LOGOMARK.png?1708356054",
   isSpam: "FALSE",
   safetyLevel: "STRONG_WARNING",
   feeData: {
@@ -226,6 +236,8 @@ export const VDNTTokenInfo: TokenInfo = {
     blockaidFees: null,
     updatedAt: 1748582268,
   },
+  logoURI:
+    "https://assets.coingecko.com/coins/images/33155/standard/256x256_mark.png",
 };
 
 export const WETHTokenInfo: TokenInfo = {
@@ -252,6 +264,7 @@ export const WETHTokenInfo: TokenInfo = {
     blockaidFees: null,
     updatedAt: 1748582268,
   },
+  logoURI: "https://assets.coingecko.com/coins/images/2518/standard/weth.png",
 };
 
 export const USDCTokenInfo: TokenInfo = {
@@ -263,7 +276,8 @@ export const USDCTokenInfo: TokenInfo = {
   name: "USD Coin",
   standard: "ERC20",
   projectName: "USD Coin",
-  logoUrl: "https://coin-images.coingecko.com/coins/images/6319/large/USD_Coin_icon.png",
+  logoUrl:
+    "https://coin-images.coingecko.com/coins/images/6319/large/USD_Coin_icon.png",
   isSpam: "FALSE",
   safetyLevel: "VERIFIED",
   feeData: {
@@ -278,10 +292,12 @@ export const USDCTokenInfo: TokenInfo = {
     blockaidFees: null,
     updatedAt: 1748582268,
   },
+  logoURI:
+    "https://assets.coingecko.com/coins/images/6319/standard/USD_Coin_icon.png",
 };
 
 // Backward compatibility aliases
 export const VritualProtocolTokenInfo = VirtualProtocolTokenInfo;
 
 // Additional token types export for compatibility
-export type { TokenInfo }; 
+export type { TokenInfo };
