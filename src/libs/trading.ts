@@ -64,7 +64,9 @@ export class TokenSwapper {
       throw new Error("Invalid constructor arguments");
     }
 
-    this.routerAddress = routerAddress ? toChecksumAddress(routerAddress) : undefined;
+    this.routerAddress = routerAddress
+      ? toChecksumAddress(routerAddress)
+      : undefined;
   }
 
   private async initialize() {
@@ -105,13 +107,13 @@ export class TokenSwapper {
     try {
       const pairAddress = this.poolConfig?.poolAddress || "";
       console.log("Initial pool address:", pairAddress);
-      
+
       let finalPairAddress = pairAddress;
       if (!pairAddress || pairAddress === ethers.constants.AddressZero) {
         console.log("No pool address provided, checking factory");
         const factoryAddress = await this.router.factory();
         console.log("Factory address:", factoryAddress);
-        
+
         const factory = new ethers.Contract(
           factoryAddress,
           V2_FACTORY_ABI,
@@ -122,7 +124,7 @@ export class TokenSwapper {
           this.tokenOutAddress
         );
         console.log("Factory pair lookup result:", factoryPairAddress);
-        
+
         if (factoryPairAddress === ethers.constants.AddressZero) {
           console.log("Factory returned zero address");
           return { exists: false, pairAddress: factoryPairAddress };
@@ -131,8 +133,12 @@ export class TokenSwapper {
       }
 
       console.log("Using pair address:", finalPairAddress);
-      const pair = new ethers.Contract(finalPairAddress, V2_PAIR_ABI, this.provider);
-      
+      const pair = new ethers.Contract(
+        finalPairAddress,
+        V2_PAIR_ABI,
+        this.provider
+      );
+
       try {
         console.log("Getting reserves and tokens...");
         const [reserve0, reserve1] = await pair.getReserves();
@@ -143,15 +149,23 @@ export class TokenSwapper {
           token0: token0.toLowerCase(),
           token1: token1.toLowerCase(),
           expectedToken0: this.tokenInAddress.toLowerCase(),
-          expectedToken1: this.tokenOutAddress.toLowerCase()
+          expectedToken1: this.tokenOutAddress.toLowerCase(),
         });
 
-        const poolTokens = new Set([token0.toLowerCase(), token1.toLowerCase()]);
-        const expectedTokens = new Set([this.tokenInAddress.toLowerCase(), this.tokenOutAddress.toLowerCase()]);
-        
-        const tokensMatch = Array.from(poolTokens).every(t => expectedTokens.has(t));
+        const poolTokens = new Set([
+          token0.toLowerCase(),
+          token1.toLowerCase(),
+        ]);
+        const expectedTokens = new Set([
+          this.tokenInAddress.toLowerCase(),
+          this.tokenOutAddress.toLowerCase(),
+        ]);
+
+        const tokensMatch = Array.from(poolTokens).every((t) =>
+          expectedTokens.has(t)
+        );
         console.log("Tokens match:", tokensMatch);
-        
+
         if (!tokensMatch) {
           console.log("Token mismatch in pool");
           return { exists: false, pairAddress: finalPairAddress };
@@ -164,7 +178,7 @@ export class TokenSwapper {
 
         console.log("Pool reserves:", {
           reserve0: ethers.utils.formatEther(reserves.reserve0),
-          reserve1: ethers.utils.formatEther(reserves.reserve1)
+          reserve1: ethers.utils.formatEther(reserves.reserve1),
         });
 
         return { exists: true, pairAddress: finalPairAddress, reserves };
@@ -173,7 +187,7 @@ export class TokenSwapper {
           error,
           pairAddress: finalPairAddress,
           tokenIn: this.tokenInAddress,
-          tokenOut: this.tokenOutAddress
+          tokenOut: this.tokenOutAddress,
         });
         return { exists: false, pairAddress: finalPairAddress };
       }
@@ -181,7 +195,7 @@ export class TokenSwapper {
       console.error("Pool lookup error:", {
         error,
         tokenIn: this.tokenInAddress,
-        tokenOut: this.tokenOutAddress
+        tokenOut: this.tokenOutAddress,
       });
       return { exists: false, pairAddress: ethers.constants.AddressZero };
     }
@@ -215,14 +229,20 @@ export class TokenSwapper {
 
       const poolInfo = await this.checkPool();
       if (!poolInfo.exists || !poolInfo.reserves) {
-        throw new Error("Pool validation failed");
+        console.error("Pool not found");
       }
 
       const path = [this.tokenInAddress, this.tokenOutAddress];
-      const amounts = await this.router.callStatic.getAmountsOut(amountInWei, path);
-      
+      const amounts = await this.router.callStatic.getAmountsOut(
+        amountInWei,
+        path
+      );
+
       const amountOut = amounts[1];
-      const portionAmount = portionBips > 0 ? amountOut.mul(portionBips).div(10000) : ethers.constants.Zero;
+      const portionAmount =
+        portionBips > 0
+          ? amountOut.mul(portionBips).div(10000)
+          : ethers.constants.Zero;
       const userAmount = amountOut.sub(portionAmount);
 
       if (userAmount.isZero()) {
@@ -233,7 +253,7 @@ export class TokenSwapper {
         amountIn: ethers.utils.formatEther(amounts[0]),
         totalAmountOut: ethers.utils.formatEther(amountOut),
         userAmount: ethers.utils.formatEther(userAmount),
-        portionAmount: ethers.utils.formatEther(portionAmount)
+        portionAmount: ethers.utils.formatEther(portionAmount),
       };
     } catch (error: any) {
       return {
@@ -241,7 +261,7 @@ export class TokenSwapper {
         totalAmountOut: "0",
         userAmount: "0",
         portionAmount: "0",
-        error: error.message || "Failed to get quote"
+        error: error.message || "Failed to get quote",
       };
     }
   }
@@ -255,13 +275,15 @@ export class TokenSwapper {
     await this.initialize();
     if (!this.signer) throw new Error("Not initialized");
 
-    const amountInWei = typeof amountIn === 'string' 
-      ? ethers.utils.parseEther(amountIn)
-      : amountIn;
-    
-    const minAmountOutWei = typeof minAmountOut === 'string'
-      ? ethers.utils.parseEther(minAmountOut)
-      : minAmountOut;
+    const amountInWei =
+      typeof amountIn === "string"
+        ? ethers.utils.parseEther(amountIn)
+        : amountIn;
+
+    const minAmountOutWei =
+      typeof minAmountOut === "string"
+        ? ethers.utils.parseEther(minAmountOut)
+        : minAmountOut;
 
     const allowance = await this.tokenIn!.allowance(
       await this.signer.getAddress(),
@@ -349,9 +371,9 @@ export class TokenSwapper {
 
     const amountInWei = ethers.BigNumber.from(amountIn);
     const path = [this.tokenInAddress, this.tokenOutAddress];
-    
+
     const amounts = await this.router.getAmountsOut(amountInWei, path);
-    
+
     return amounts[1];
   }
 }
