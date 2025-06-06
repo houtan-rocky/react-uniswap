@@ -23,8 +23,6 @@ export const wagmiAdapter = new WagmiAdapter({
 
 export const clientConfig = wagmiAdapter.wagmiConfig;
 
-const queryClient = new QueryClient();
-
 const metadata = {
   name: config.appName,
   description: config.appDescription,
@@ -44,10 +42,10 @@ createAppKit({
     socials: [],
     allWallets: false,
     emailShowWallets: false,
-    swaps: false,
+    swaps: false
   },
-  enableInjected: true,
-  showWallets: false,
+  enableInjected: false,
+  showWallets: false
 });
 
 type ProviderProps = {
@@ -63,6 +61,6 @@ export const Provider: React.FC<ProviderProps> = ({ children }) => {
   return React.createElement(
     WagmiProvider,
     { config: wagmiAdapter.wagmiConfig as Config },
-    React.createElement(QueryClientProvider, { client: queryClient }, children)
+    React.createElement(QueryClientProvider, { client: new QueryClient() }, children)
   );
 };
