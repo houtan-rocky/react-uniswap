@@ -1,10 +1,19 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
+import dts from 'vite-plugin-dts'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    dts({
+      insertTypesEntry: true,
+      rollupTypes: true,
+      include: ['src/**/*.ts', 'src/**/*.tsx'],
+      exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/*.js', 'src/**/*.jsx'],
+    }),
+  ],
   server: {
     proxy: {
       '/api/uniswap/v1': {
@@ -73,23 +82,32 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'ReactUniswap',
-      formats: ['es', 'umd'],
-      fileName: (format) => `index.${format}.js`
+      name: 'UniswapWidget',
+      fileName: (format) => `index.${format}.js`,
+      formats: ['es', 'umd']
     },
     rollupOptions: {
       external: [
-        'react', 
-        'react-dom', 
+        'react',
+        'react-dom',
         'react/jsx-runtime',
-        'react/jsx-dev-runtime'
+        'next',
+        '@wagmi/core',
+        'wagmi',
+        'viem',
+        '@uniswap/sdk-core'
       ],
       output: {
+        preserveModules: false,
         globals: {
-          'react': 'React',
+          react: 'React',
           'react-dom': 'ReactDOM',
-          'react/jsx-runtime': 'jsxRuntime',
-          'react/jsx-dev-runtime': 'jsxDevRuntime'
+          'react/jsx-runtime': 'jsx',
+          next: 'Next',
+          '@wagmi/core': 'wagmiCore',
+          'wagmi': 'wagmi',
+          'viem': 'viem',
+          '@uniswap/sdk-core': 'uniswapSdkCore'
         }
       }
     },

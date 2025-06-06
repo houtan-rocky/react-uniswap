@@ -3,6 +3,7 @@ import React from "react";
 import Providers from "./components/Provider";
 import SwapWidget from "./components/SwapWidget";
 import { TokenInfo } from "./types";
+import { base } from "@reown/appkit/networks";
 
 // const SOLACE_TOKEN = {
 //   chainId: 8453,
@@ -53,7 +54,13 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Providers>
+      <Providers
+        config={{
+          appName: "Uniswap Widget",
+          projectId: "1234567890",
+          chains: [base.id.toString()],
+        }}
+      >
         <SwapWidget
           poolConfig={poolConfig}
           allowTokenChange={true}

@@ -18,3 +18,14 @@ export {
   VritualProtocolTokenInfo,
   SolaceTokenInfo,
 } from "./constants";
+
+// Re-export commonly used types
+export type {
+  SwapProps,
+  ThemeConfig,
+  TokenInfo,
+  PoolConfig,
+  SwapState
+} from './types';
+
+export { lightTheme, darkTheme } from './types';
