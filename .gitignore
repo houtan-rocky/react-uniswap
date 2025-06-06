@@ -32,3 +32,6 @@ dist-ssr
 
 # history
 .history
+
+# Additional entries
+coverage

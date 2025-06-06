@@ -1,103 +1,96 @@
 # Uniswap Widget Package
 
-A clean, ready-to-use Uniswap swap widget package that can be easily integrated into any React application.
-
-## Features
-
-- 🔄 Complete swap functionality using Uniswap Protocol
-- 🔗 Built-in wallet connection support
-- 🎨 Clean, customizable UI
-- 📱 Responsive design
-- ⚡ Fast and lightweight
-- 🔧 Environment-based configuration
+A React component package for easily integrating Uniswap swap functionality into your dApp.
 
 ## Installation
 
 ```bash
-npm install
+npm install uniswap-widget-package
+# or
+yarn add uniswap-widget-package
+# or
+pnpm add uniswap-widget-package
 ```
 
-## Setup
+## Configuration
 
-1. Copy the environment example file:
-```bash
-cp env.example .env
+### 1. Environment Variables
+Create a `.env.local` file in your Next.js project root with these variables:
+
+```env
+# Required: WalletConnect Project ID
+# Get yours at: https://cloud.walletconnect.com/
+NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your_project_id_here
+
+# Required: App Metadata (shown in wallet connection prompts)
+NEXT_PUBLIC_APP_NAME=Your App Name
+NEXT_PUBLIC_APP_DESCRIPTION=Your app description
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+NEXT_PUBLIC_APP_ICON=https://your-icon-url.com/icon.png
 ```
 
-2. Update the `.env` file with your configuration:
-```bash
-# WalletConnect/AppKit Configuration
-VITE_REOWN_PROJECT_ID=your_walletconnect_project_id_here
+### 2. Provider Setup
 
-# App Metadata
-VITE_APP_NAME=Your App Name
-VITE_APP_DESCRIPTION=Your app description
-VITE_APP_URL=https://your-domain.com
-VITE_APP_ICON=https://your-icon-url.com/icon.png
-```
-
-3. Get a WalletConnect Project ID:
-   - Visit [WalletConnect Cloud](https://cloud.walletconnect.com/)
-   - Create a new project
-   - Copy the Project ID to your `.env` file
-
-## Usage
-
-```bash
-# Development
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-## Integration
-
-This package provides a simple SwapWidget component that can be easily integrated into your React application. The widget handles all the complexity of interacting with the Uniswap protocol, including:
-
-- Token selection
-- Price quotation
-- Wallet connection
-- Transaction execution
-- Balance management
-
-### Basic Usage
+Wrap your app with the Provider component:
 
 ```tsx
-import { SwapWidget, Provider } from 'uniswap-widget-package';
+// pages/_app.tsx or similar
+import { Provider } from 'uniswap-widget-package';
 
-function App() {
+export default function App({ Component, pageProps }) {
   return (
-    <Provider>
-      <SwapWidget />
+    <Provider
+      // Optional: Override default config
+      config={{
+        appName: process.env.NEXT_PUBLIC_APP_NAME,
+        projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
+        // Optional: Supported chains (defaults to all major EVM chains)
+        chains: ['ethereum', 'base', 'arbitrum'],
+      }}
+    >
+      <Component {...pageProps} />
     </Provider>
   );
 }
 ```
 
-## Configuration
+## Usage
 
-### Environment Variables
+```tsx
+import { SwapWidget } from 'uniswap-widget-package';
 
-The widget supports configuration through environment variables:
+export default function SwapPage() {
+  return (
+    <SwapWidget 
+      // Optional: Configure widget
+      config={{
+        defaultInputToken: 'ETH',
+        defaultOutputToken: 'USDC',
+        theme: 'dark', // or 'light'
+        slippageTolerance: 0.5, // 0.5%
+        deadlineMinutes: 20,
+      }}
+    />
+  );
+}
+```
 
-- `VITE_REOWN_PROJECT_ID`: WalletConnect project ID (required)
-- `VITE_APP_NAME`: Your application name
-- `VITE_APP_DESCRIPTION`: Description shown in wallet prompts
-- `VITE_APP_URL`: Your application URL
-- `VITE_APP_ICON`: Icon URL for wallet displays
+## Requirements
 
-### Widget Options
+- React 18 or higher
+- Next.js 13 or higher
+- Valid WalletConnect v2 Project ID
 
-The widget supports configuration for:
-- Custom token lists
-- Network settings
-- Slippage tolerance
-- Transaction deadlines
+## Features
+
+- Easy integration with Next.js
+- Built-in wallet connection
+- Customizable UI
+- TypeScript support
+- Multi-chain support
+- Dark/Light theme
+- Customizable token lists
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
+MIT

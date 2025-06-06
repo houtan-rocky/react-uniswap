@@ -16,5 +16,5 @@ export {
   DEFAULT_SLIPPAGE,
   DEFAULT_DEADLINE_MINUTES,
   VritualProtocolTokenInfo,
-  SolaceTokenInfo
-} from './constants'; 
+  SolaceTokenInfo,
+} from "./constants";
