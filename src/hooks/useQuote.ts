@@ -59,7 +59,7 @@ export default function useQuote({
         console.log("Converting amount", {
           inputAmount: state.inputAmount,
           decimals: poolConfig.tokenIn.decimals,
-          tokenAddress: poolConfig.tokenIn.address
+          tokenAddress: poolConfig.tokenIn.address,
         });
 
         // Convert input amount to wei

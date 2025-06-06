@@ -108,6 +108,7 @@ export interface SwapState {
   outputToken: TokenInfo | null;
   loading: boolean;
   error: null | string;
+  inputDisabled: boolean;
   routeInfo?: {
     isDirectRoute: boolean;
     routeString?: string;

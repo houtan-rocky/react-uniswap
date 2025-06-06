@@ -50,7 +50,8 @@ export class TokenSwapper {
   constructor(
     tokenInAddressOrConfig: string | PoolConfig,
     tokenOutAddress?: string,
-    routerAddress?: string
+    routerAddress?: string,
+    signer?: ethers.providers.JsonRpcSigner
   ) {
     if (typeof tokenInAddressOrConfig === "string" && tokenOutAddress) {
       this.tokenInAddress = toChecksumAddress(tokenInAddressOrConfig);
@@ -67,6 +68,8 @@ export class TokenSwapper {
     this.routerAddress = routerAddress
       ? toChecksumAddress(routerAddress)
       : undefined;
+
+    this.signer = signer || null;
   }
 
   private async initialize() {
@@ -229,7 +232,7 @@ export class TokenSwapper {
 
       const poolInfo = await this.checkPool();
       if (!poolInfo.exists || !poolInfo.reserves) {
-        console.error("Pool not found");
+        throw new Error("Pool validation failed");
       }
 
       const path = [this.tokenInAddress, this.tokenOutAddress];
