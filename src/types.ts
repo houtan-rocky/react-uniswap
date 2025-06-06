@@ -131,6 +131,8 @@ export interface ThemeConfig {
     background: string;
     text: string;
     border: string;
+    paddingY: number;
+    paddingX: number;
   };
   swapButton: {
     background: string;
@@ -182,7 +184,9 @@ export const lightTheme: ThemeConfig = {
   tokenButton: {
     background: '#FFFFFF',
     text: '#000000',
-    border: '#EBEBEB'
+    border: '#EBEBEB',
+    paddingY: 10,
+    paddingX: 10
   },
   swapButton: {
     background: '#FF007A',
@@ -219,7 +223,9 @@ export const darkTheme: ThemeConfig = {
   tokenButton: {
     background: '#2D2D2D',
     text: '#FFFFFF',
-    border: '#3D3D3D'
+    border: '#3D3D3D',
+    paddingY: 10,
+    paddingX: 10
   },
   swapButton: {
     background: '#FF007A',

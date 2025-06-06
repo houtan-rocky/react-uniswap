@@ -199,6 +199,7 @@ const SwapWidget: React.FC<SwapProps> = ({
               style={{
                 backgroundColor: theme.tokenButton.background,
                 border: `1px solid ${theme.tokenButton.border}`,
+                padding: `${theme.tokenButton.paddingY}px ${theme.tokenButton.paddingX}px`,
               }}
             >
               {poolConfig.tokenOut.logoURI && (
