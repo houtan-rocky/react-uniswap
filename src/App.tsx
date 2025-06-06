@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import Providers from "./components/Provider";
+import { Provider } from "./components/Provider";
 import SwapWidget from "./components/SwapWidget";
 import { TokenInfo } from "./types";
 import { base } from "@reown/appkit/networks";
@@ -54,10 +54,10 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Providers
+      <Provider
         config={{
           appName: "Uniswap Widget",
-          projectId: "1234567890",
+          projectId: "0949d19c96a2c30fed8538ed50b2bc46",
           chains: [base.id.toString()],
         }}
       >
@@ -70,7 +70,7 @@ const App: React.FC = () => {
             chainIds: [8453], // Base chain
           }}
         />
-      </Providers>
+      </Provider>
     </div>
   );
 };
