@@ -11,9 +11,11 @@ import { twMerge } from "tailwind-merge";
 const SwapWidget: React.FC<SwapProps> = ({
   poolConfig = DEFAULT_POOL_CONFIG,
   theme: customTheme = {},
+  onSwap,
 }) => {
   const { open } = useAppKit();
   const { isConnected } = useAccount();
+  const [isSwapping, setIsSwapping] = useState(false);
 
   // Merge custom theme with default light theme
   const theme = useMemo<ThemeConfig>(
@@ -64,7 +66,16 @@ const SwapWidget: React.FC<SwapProps> = ({
   }, [isConnected]);
 
   useQuote({ state, setState, poolConfig });
-  const { swap } = useSwap({ state, setState });
+  const { swap } = useSwap({ state, setState, onSwap });
+
+  const handleSwap = async () => {
+    setIsSwapping(true);
+    try {
+      await swap();
+    } finally {
+      setIsSwapping(false);
+    }
+  };
 
   const handleInputAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -222,27 +233,30 @@ const SwapWidget: React.FC<SwapProps> = ({
         <button
           disabled={
             state.loading ||
+            isSwapping ||
             !state.inputAmount ||
             Number(state.inputAmount) <= 0
           }
-          onClick={swap}
+          onClick={handleSwap}
           className="w-full py-4 rounded-2xl transition-colors"
           style={{
             backgroundColor:
               state.loading ||
+              isSwapping ||
               !state.inputAmount ||
               Number(state.inputAmount) <= 0
                 ? theme.swapButton.disabledBackground
                 : theme.swapButton.background,
             color:
               state.loading ||
+              isSwapping ||
               !state.inputAmount ||
               Number(state.inputAmount) <= 0
                 ? theme.swapButton.disabledText
                 : theme.swapButton.text,
           }}
         >
-          {state.loading ? "Getting Quote..." : "Swap"}
+          {isSwapping ? "Swapping..." : state.loading ? "Getting Quote..." : "Swap"}
         </button>
       ) : (
         <button
