@@ -56,53 +56,7 @@ createAppKit({
   ],
 });
 
-interface ProviderConfig {
-  appName: string;
-  projectId?: string;
-  chains: string[];
-  rpc?: Record<string, { http: string[] }>;
-  poolValidationRetries?: number;
-  quoteValidationTimeout?: number;
-}
-
-interface ProviderProps {
-  children: React.ReactNode;
-  config: ProviderConfig;
-}
-
-const Provider: React.FC<ProviderProps> = ({ children, config }) => {
-  const projectId = config.projectId || "YOUR_DEFAULT_PROJECT_ID";
-  const queryClient = new QueryClient();
-  
-  const wagmiAdapter = new WagmiAdapter({
-    projectId,
-    connectors: [],
-    networks: [base],
-  });
-
-  createAppKit({
-    adapters: [wagmiAdapter],
-    projectId,
-    networks: [base],
-    defaultNetwork: base,
-    metadata: {
-      name: config.appName,
-      description: "Uniswap Widget Integration",
-      url: "",
-      icons: [],
-    },
-    features: {
-      analytics: true,
-      email: false,
-      socials: [],
-      allWallets: true,
-      emailShowWallets: true,
-      swaps: false,
-    },
-    enableInjected: true,
-    showWallets: true,
-  });
-
+const Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return React.createElement(
     WagmiProvider,
     { config: wagmiAdapter.wagmiConfig as Config },
