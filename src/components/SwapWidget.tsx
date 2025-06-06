@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useAccount } from "wagmi";
 import { DEFAULT_POOL_CONFIG } from "../config/tokens";
-import { SwapState, SwapProps } from "../types";
+import { SwapState, SwapProps, lightTheme, ThemeConfig } from "../types";
 import useQuote from "../hooks/useQuote";
 import useSwap from "../hooks/useSwap";
 import { IoMdArrowDown } from "react-icons/io";
@@ -9,9 +9,37 @@ import { useAppKit } from "@reown/appkit/react";
 
 const SwapWidget: React.FC<SwapProps> = ({
   poolConfig = DEFAULT_POOL_CONFIG,
+  theme: customTheme = {},
 }) => {
   const { open } = useAppKit();
   const { isConnected } = useAccount();
+  
+  // Merge custom theme with default light theme
+  const theme = useMemo<ThemeConfig>(() => ({
+    ...lightTheme,
+    ...customTheme,
+    tokenButton: {
+      ...lightTheme.tokenButton,
+      ...customTheme.tokenButton,
+    },
+    swapButton: {
+      ...lightTheme.swapButton,
+      ...customTheme.swapButton,
+    },
+    connectButton: {
+      ...lightTheme.connectButton,
+      ...customTheme.connectButton,
+    },
+    inputField: {
+      ...lightTheme.inputField,
+      ...customTheme.inputField,
+    },
+    buySection: {
+      ...lightTheme.buySection,
+      ...customTheme.buySection,
+    },
+  }), [customTheme]);
+
   const [state, setState] = useState<SwapState>({
     inputAmount: "",
     outputAmount: "",
@@ -24,14 +52,8 @@ const SwapWidget: React.FC<SwapProps> = ({
   useQuote({ state, setState, poolConfig });
   const { swap } = useSwap({ state, setState });
 
-  // Handle input amount changes
   const handleInputAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log("Input change:", {
-      value,
-      isValid: value === "" || /^\d*\.?\d*$/.test(value),
-    });
-    // Allow empty string, valid numbers, and partial numbers (like "0.", ".")
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setState((prev) => ({ ...prev, inputAmount: value }));
     }
@@ -44,36 +66,53 @@ const SwapWidget: React.FC<SwapProps> = ({
   };
 
   return (
-    <div className="relative w-full max-w-md bg-[#FCFAFE] p-2 rounded-xl">
-      <div className="p-4 border border-[#EBEBEB] rounded-2xl relative">
-        <label className="block text-gray-600 mb-2">Sell</label>
+    <div 
+      className="relative w-full max-w-md rounded-xl p-2"
+      style={{ backgroundColor: theme.background }}
+    >
+      {/* Sell Section */}
+      <div 
+        className="p-4 rounded-2xl relative"
+        style={{ 
+          backgroundColor: theme.foreground,
+          border: `1px solid ${theme.border}` 
+        }}
+      >
+        <label className="block mb-2" style={{ color: theme.textSecondary }}>
+          Sell
+        </label>
         <div className="flex items-center">
           <input
-            key="sell-input"
             type="text"
             value={state.inputAmount}
             onChange={handleInputAmountChange}
-            className={`w-full bg-transparent text-2xl outline-none`}
+            className="w-full text-2xl outline-none"
             placeholder="0"
             inputMode="decimal"
+            style={{ 
+              backgroundColor: theme.inputField.background,
+              color: theme.inputField.text,
+            }}
           />
           <div className="flex flex-col gap-2">
-            <div className="ml-2 p-3 py-2 border border-gray-200 bg-white rounded-full flex items-center justify-center gap-2 min-w-[140px]">
+            <div 
+              className="ml-2 p-3 py-2 rounded-full flex items-center justify-center gap-2 min-w-[140px]"
+              style={{ 
+                backgroundColor: theme.tokenButton.background,
+                border: `1px solid ${theme.tokenButton.border}`,
+              }}
+            >
               {poolConfig.tokenIn.logoURI && (
                 <img
                   src={poolConfig.tokenIn.logoURI}
                   alt={poolConfig.tokenIn.symbol}
                   className="h-[20px] w-[20px] flex-shrink-0 rounded-full"
                   onError={(e) => {
-                    console.log(
-                      "Input token logo failed to load:",
-                      poolConfig.tokenIn.logoURI
-                    );
                     (e.target as HTMLImageElement).style.display = "none";
                   }}
                 />
               )}
-              <span className="font-bold text-sm">
+              <span style={{ color: theme.tokenButton.text }} className="font-bold text-sm">
                 {poolConfig.tokenIn.symbol}
               </span>
             </div>
@@ -81,42 +120,60 @@ const SwapWidget: React.FC<SwapProps> = ({
         </div>
       </div>
 
+      {/* Swap Arrow */}
       <div className="relative z-10 flex justify-center items-center h-[5px]">
-        <div className="rounded-2xl w-[40px] h-[40px] bg-[#EBEBEB] flex justify-center items-center">
-          <IoMdArrowDown className="text-2xl text-black" />
+        <div 
+          className="rounded-2xl w-[40px] h-[40px] flex justify-center items-center"
+          style={{ backgroundColor: theme.border }}
+        >
+          <IoMdArrowDown className="text-2xl" style={{ color: theme.text }} />
         </div>
       </div>
 
-      <div className="mb-2 p-4 bg-[#f5f5f5] rounded-2xl relative">
-        <label className="block text-gray-600 mb-2">Buy</label>
+      {/* Buy Section */}
+      <div 
+        className="mb-2 p-4 rounded-2xl relative"
+        style={{ 
+          backgroundColor: theme.buySection.background,
+          border: `1px solid ${theme.buySection.border}` 
+        }}
+      >
+        <label className="block mb-2" style={{ color: theme.textSecondary }}>
+          Buy
+        </label>
         <div className="flex items-center">
           <input
             type="text"
-            value={
-              state.loading ? "Fetching Quotes" : state.outputAmount || "0"
-            }
+            value={state.loading ? "Fetching Quotes" : state.outputAmount || "0"}
             readOnly
             disabled={state.loading}
-            className="w-full bg-transparent text-2xl outline-none opacity-80 disabled:opacity-30 disabled:text-lg"
+            className="w-full text-2xl outline-none disabled:text-lg"
+            style={{ 
+              backgroundColor: theme.inputField.background,
+              color: theme.inputField.text,
+              opacity: state.loading ? 0.3 : 0.8,
+            }}
             placeholder="0"
           />
           <div className="flex flex-col gap-2">
-            <div className="ml-2 p-3 py-2 border border-gray-200 bg-white rounded-full flex items-center justify-center gap-2 min-w-[140px]">
+            <div 
+              className="ml-2 p-3 py-2 rounded-full flex items-center justify-center gap-2 min-w-[140px]"
+              style={{ 
+                backgroundColor: theme.tokenButton.background,
+                border: `1px solid ${theme.tokenButton.border}`,
+              }}
+            >
               {poolConfig.tokenOut.logoURI && (
                 <img
                   src={poolConfig.tokenOut.logoURI}
                   alt={poolConfig.tokenOut.symbol}
                   className="h-[20px] w-[20px] flex-shrink-0 rounded-full"
                   onError={(e) => {
-                    console.log(
-                      "Output token logo failed to load:",
-                      poolConfig.tokenOut.logoURI
-                    );
                     (e.target as HTMLImageElement).style.display = "none";
                   }}
                 />
               )}
-              <span className="font-bold text-sm">
+              <span style={{ color: theme.tokenButton.text }} className="font-bold text-sm">
                 {poolConfig.tokenOut.symbol}
               </span>
             </div>
@@ -124,45 +181,54 @@ const SwapWidget: React.FC<SwapProps> = ({
         </div>
       </div>
 
+      {/* Error Message */}
       {state.error && (
         <div className="mb-2 p-4 bg-red-50 text-red-500 rounded-2xl">
           {state.error}
         </div>
       )}
 
+      {/* Action Button */}
       {isConnected ? (
         <button
-          disabled={
-            state.loading ||
-            !state.inputAmount ||
-            Number(state.inputAmount) <= 0
-          }
+          disabled={state.loading || !state.inputAmount || Number(state.inputAmount) <= 0}
           onClick={swap}
-          className="w-full py-4 bg-pink-500 text-white rounded-2xl hover:bg-pink-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full py-4 rounded-2xl transition-colors"
+          style={{ 
+            backgroundColor: state.loading || !state.inputAmount || Number(state.inputAmount) <= 0
+              ? theme.swapButton.disabledBackground
+              : theme.swapButton.background,
+            color: state.loading || !state.inputAmount || Number(state.inputAmount) <= 0
+              ? theme.swapButton.disabledText
+              : theme.swapButton.text,
+          }}
         >
           {state.loading ? "Getting Quote..." : "Swap"}
         </button>
       ) : (
         <button
           onClick={onConnectWallet}
-          className="w-full py-4 bg-pink-100 text-pink-500 rounded-2xl hover:bg-pink-200 transition-colors"
+          className="w-full py-4 rounded-2xl transition-colors"
+          style={{ 
+            backgroundColor: theme.connectButton.background,
+            color: theme.connectButton.text,
+          }}
         >
           Connect Wallet
         </button>
       )}
 
+      {/* Price Info */}
       {state.inputAmount && state.outputAmount && (
         <div className="p-4 rounded-2xl">
-          <div className="flex justify-between items-center text-sm text-[#7d7d7d] mb-2">
+          <div className="flex justify-between items-center text-sm mb-2" style={{ color: theme.textSecondary }}>
             1 {poolConfig.tokenIn.symbol} ={" "}
-            {(Number(state.outputAmount) / Number(state.inputAmount)).toFixed(
-              6
-            )}{" "}
+            {(Number(state.outputAmount) / Number(state.inputAmount)).toFixed(6)}{" "}
             {poolConfig.tokenOut.symbol}
           </div>
 
           {state.routeInfo && (
-            <div className="mt-2 text-xs text-gray-500">
+            <div className="mt-2 text-xs" style={{ color: theme.textSecondary }}>
               {state.routeInfo.isDirectRoute ? (
                 <div className="flex justify-between">
                   <span>Direct swap</span>
@@ -178,6 +244,7 @@ const SwapWidget: React.FC<SwapProps> = ({
         </div>
       )}
 
+      {/* Account Button */}
       {isConnected && (
         <div className="flex justify-center items-center mt-2">
           <appkit-account-button />
