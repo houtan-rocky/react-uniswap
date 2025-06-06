@@ -73,17 +73,23 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'UniswapWidget',
-      fileName: (format) => `index.${format}.js`,
-      formats: ['es', 'umd']
+      name: 'ReactUniswap',
+      formats: ['es', 'umd'],
+      fileName: (format) => `index.${format}.js`
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'next'],
+      external: [
+        'react', 
+        'react-dom', 
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime'
+      ],
       output: {
         globals: {
-          react: 'React',
+          'react': 'React',
           'react-dom': 'ReactDOM',
-          next: 'Next'
+          'react/jsx-runtime': 'jsxRuntime',
+          'react/jsx-dev-runtime': 'jsxDevRuntime'
         }
       }
     },

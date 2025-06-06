@@ -1,5 +1,6 @@
 "use client";
 
+import React from 'react';
 import { base } from "@reown/appkit/networks";
 import { createAppKit } from "@reown/appkit/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -55,10 +56,16 @@ createAppKit({
   ],
 });
 
-export default function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <WagmiProvider config={wagmiAdapter.wagmiConfig as Config}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </WagmiProvider>
+const Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return React.createElement(
+    WagmiProvider,
+    { config: wagmiAdapter.wagmiConfig as Config },
+    React.createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      children
+    )
   );
-}
+};
+
+export default Provider;
