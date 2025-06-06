@@ -13,8 +13,10 @@ export const projectId = config.projectId;
 
 export const networks = [base];
 
+// Explicitly disable all connectors
 const connectors: CreateConnectorFn[] = [];
 
+// Create adapter with minimal configuration
 export const wagmiAdapter = new WagmiAdapter({
   projectId,
   connectors,
@@ -24,16 +26,19 @@ export const wagmiAdapter = new WagmiAdapter({
 export const clientConfig = wagmiAdapter.wagmiConfig;
 
 const metadata = {
-  name: config.appName,
-  description: config.appDescription,
-  url: config.appUrl,
-  icons: [config.appIcon],
+  name: config.appName || "Uniswap Widget",
+  description: config.appDescription || "Uniswap Widget Integration",
+  url: "https://uniswap.org",
+  icons: config.appIcon ? [config.appIcon] : [],
 };
 
+// Initialize AppKit with minimal features
 createAppKit({
   adapters: [wagmiAdapter],
   projectId,
   networks: [base],
+  debug: false,
+  enableCoinbase: false,
   defaultNetwork: base,
   metadata: metadata,
   features: {
@@ -42,10 +47,10 @@ createAppKit({
     socials: [],
     allWallets: false,
     emailShowWallets: false,
-    swaps: false
+    swaps: false,
   },
   enableInjected: false,
-  showWallets: false
+  showWallets: false,
 });
 
 type ProviderProps = {
@@ -61,6 +66,10 @@ export const Provider: React.FC<ProviderProps> = ({ children }) => {
   return React.createElement(
     WagmiProvider,
     { config: wagmiAdapter.wagmiConfig as Config },
-    React.createElement(QueryClientProvider, { client: new QueryClient() }, children)
+    React.createElement(
+      QueryClientProvider,
+      { client: new QueryClient() },
+      children
+    )
   );
 };
