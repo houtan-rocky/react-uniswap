@@ -74,6 +74,7 @@ const SwapWidget: React.FC<SwapProps> = ({
       await swap();
     } finally {
       setIsSwapping(false);
+      setState((prev) => ({ ...prev, inputAmount: "", outputAmount: "" }));
     }
   };
 
