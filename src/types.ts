@@ -8,33 +8,12 @@ declare global {
 }
 
 export interface TokenInfo {
-  tokenId: string;
+  chainId: number;
   address: string;
+  decimals: number;
   symbol: string;
   name: string;
-  decimals: number;
-  chainId: number;
-  logoURI?: string;
-  logoUrl?: string;
-  isSpam: string;
-  safetyLevel: string;
-  standard: string;
-  projectName: string;
-  feeData: {
-    sellFeeBps: string;
-    buyFeeBps: string;
-  };
-  protectionInfo: {
-    result: string;
-    tokenId: string;
-    chainId: number;
-    address: string;
-    blockaidFees: {
-      buy?: number;
-      sell?: number;
-    } | null;
-    updatedAt: number;
-  };
+  logoURI: string;
 }
 
 // Types for Uniswap Search API
@@ -93,21 +72,33 @@ export interface SwapRouteInfo {
   intermediaryToken?: string;
 }
 
+export interface PoolConfig {
+  tokenIn: TokenInfo;
+  tokenOut: TokenInfo;
+  poolAddress: string;
+  version: 'V2' | 'V3';
+  fee?: number; // Fee tier for V3 pools (e.g., 500, 3000, 10000)
+}
+
 export interface SwapState {
   inputAmount: string;
   outputAmount: string;
-  inputToken: Token | null;
-  outputToken: Token | null;
-  inputTokenInfo: TokenInfo | null;
-  outputTokenInfo: TokenInfo | null;
-  slippage: number;
-  deadline: number;
+  inputToken: TokenInfo | null;
+  outputToken: TokenInfo | null;
   loading: boolean;
-  txLoading: boolean;
-  error: string | null;
-  success: boolean;
-  balanceIn: string;
-  balanceOut: string;
-  balancesLoading: boolean;
-  routeInfo?: SwapRouteInfo;
+  error: null | string;
+  routeInfo?: {
+    isDirectRoute: boolean;
+    routeString?: string;
+    routeType?: string;
+  };
+}
+
+export interface SwapProps {
+  poolConfig: {
+    tokenIn: TokenInfo;
+    tokenOut: TokenInfo;
+    poolAddress: string;
+  };
+  allowInputTokenChange?: boolean;
 }

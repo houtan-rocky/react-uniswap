@@ -30,7 +30,7 @@ export default function useBalances({
         async (provider) => {
           const balance = await provider.getBalance(userAddress);
           return Number(ethers.utils.formatEther(balance)).toFixed(3);
-        }
+    }
       );
     }
 
@@ -38,16 +38,16 @@ export default function useBalances({
       chainId,
       `balance-erc20-${currency.address}-${userAddress}`,
       async (provider) => {
-        const ERC20Contract = new ethers.Contract(
-          currency.address,
-          ERC20_ABI,
-          provider
-        );
+    const ERC20Contract = new ethers.Contract(
+      currency.address,
+      ERC20_ABI,
+      provider
+    );
         const [balance, decimals] = await Promise.all([
           ERC20Contract.balanceOf(userAddress),
           ERC20Contract.decimals(),
         ]);
-        return toReadableAmount(balance, decimals);
+    return toReadableAmount(balance, decimals);
       }
     );
   }
@@ -74,8 +74,8 @@ export default function useBalances({
       const [balanceIn, balanceOut] = await Promise.all([
         getCurrencyBalance(
           state.inputToken.chainId,
-          address,
-          state.inputToken
+      address,
+      state.inputToken
         ),
         getCurrencyBalance(
           state.outputToken.chainId,
@@ -84,20 +84,20 @@ export default function useBalances({
         ),
       ]);
 
-      setState((prev) => ({
-        ...prev,
-        balanceIn,
+    setState((prev) => ({
+      ...prev,
+      balanceIn,
         balanceOut,
         balancesLoading: false,
-      }));
+    }));
     } catch (error) {
       console.error("Error fetching balances:", error);
-      setState((prev) => ({
-        ...prev,
+    setState((prev) => ({
+      ...prev,
         balanceIn: "0.000",
         balanceOut: "0.000", 
         balancesLoading: false,
-      }));
+    }));
     }
   };
 

@@ -36,11 +36,11 @@ export const TokenList: React.FC<TokenListProps> = ({
 
     // Filter local tokens first (from the specific list)
     const filteredLocalTokens = tokens.filter(
-      (token) =>
-        token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        token.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        token.address.toLowerCase() === searchQuery.toLowerCase()
-    );
+    (token) =>
+      token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      token.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      token.address.toLowerCase() === searchQuery.toLowerCase()
+  );
 
     // If we have local matches, show them first
     if (filteredLocalTokens.length > 0) {
@@ -87,10 +87,10 @@ export const TokenList: React.FC<TokenListProps> = ({
             const logoSrc = tokenInfo.logoUrl || tokenInfo.logoURI;
             
             return (
-              <button
+          <button
                 key={tokenInfo.address}
-                className="w-full p-4 text-left hover:bg-gray-50 flex items-center"
-                onClick={() => {
+            className="w-full p-4 text-left hover:bg-gray-50 flex items-center"
+            onClick={() => {
                   const token = new Token(
                     tokenInfo.chainId,
                     tokenInfo.address,
@@ -103,12 +103,12 @@ export const TokenList: React.FC<TokenListProps> = ({
                     token,
                     info: tokenInfo
                   });
-                  onClose();
-                }}
-              >
+              onClose();
+            }}
+          >
                 {logoSrc && (
-                  <div className="relative h-[24px] me-5">
-                    <img
+              <div className="relative h-[24px] me-5">
+                <img
                       src={logoSrc}
                       alt={tokenInfo.symbol}
                       className="h-[24px] w-[24px] rounded-full"
@@ -116,11 +116,11 @@ export const TokenList: React.FC<TokenListProps> = ({
                         // Hide broken images
                         (e.target as HTMLImageElement).style.display = 'none';
                       }}
-                    />
-                  </div>
-                )}
-                <div>
-                  <div className="font-medium">
+                />
+              </div>
+            )}
+            <div>
+              <div className="font-medium">
                     {tokenInfo.symbol === "WMATIC" ? "POL" : tokenInfo.symbol}
                   </div>
                   <div className="text-sm text-gray-500">{tokenInfo.name}</div>
@@ -133,10 +133,10 @@ export const TokenList: React.FC<TokenListProps> = ({
                   {tokenInfo.safetyLevel === "STRONG_WARNING" && (
                     <div className="text-xs text-orange-500 mt-1">
                       ⚠️ Exercise caution with this token
-                    </div>
+              </div>
                   )}
-                </div>
-              </button>
+            </div>
+          </button>
             );
           })
         )}

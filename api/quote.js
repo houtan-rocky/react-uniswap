@@ -8,7 +8,8 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Origin': 'https://react-uniswap-widget.vercel.app'
+        'Origin': 'https://react-uniswap-widget.vercel.app',
+        'api-key': process.env.UNISWAP_API_KEY
       },
       body: JSON.stringify(req.body)
     });
