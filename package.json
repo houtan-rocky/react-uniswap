@@ -1,55 +1,77 @@
 {
-  "name": "uniswap-widget-package",
+  "name": "react-uniswap",
+  "private": false,
   "version": "1.0.5",
-  "description": "React component package for easily integrating Uniswap swap functionality",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "description": "A clean Uniswap swap widget package for easy integration",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
   "files": [
     "dist",
-    "README.md",
-    "LICENSE"
+    "dist/**/*.d.ts",
+    "README.md"
   ],
-  "sideEffects": false,
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
-    "lint": "eslint src --ext .ts,.tsx",
-    "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run clean && npm run build"
-  },
-  "peerDependencies": {
-    "@reown/appkit": ">=0.1.0",
-    "@reown/appkit-adapter-wagmi": ">=0.1.0",
-    "@tanstack/react-query": ">=5.0.0",
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
-    "wagmi": ">=2.0.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "eslint": "^8.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "prepare": "npm run build",
+    "start": "serve -s dist",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "keywords": [
     "uniswap",
+    "swap",
     "widget",
-    "react",
     "defi",
-    "ethereum",
-    "web3"
+    "react",
+    "ethereum"
   ],
-  "author": "",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yourusername/uniswap-widget-package"
+  "peerDependencies": {
+    "@uniswap/sdk-core": ">=5.0.0",
+    "@wagmi/core": ">=2.0.0",
+    "wagmi": ">=2.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "viem": ">=2.0.0"
   },
-  "bugs": {
-    "url": "https://github.com/yourusername/uniswap-widget-package/issues"
+  "dependencies": {
+    "@reown/appkit": "^1.4.1",
+    "@reown/appkit-adapter-wagmi": "^1.4.1",
+    "@tanstack/react-query": "^5.60.5",
+    "@uniswap/smart-order-router": "^4.21.17",
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.4",
+    "@uniswap/v3-sdk": "^3.18.1",
+    "ethers": "5.7.2",
+    "jsbi": "^4.3.0",
+    "react-icons": "^5.3.0",
+    "tailwind-merge": "^3.3.0"
   },
-  "homepage": "https://github.com/yourusername/uniswap-widget-package#readme"
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.11.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "terser": "^5.41.0",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.11.0",
+    "vite": "^5.4.10",
+    "vite-plugin-dts": "^3.7.3"
+  }
 }

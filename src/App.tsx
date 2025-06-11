@@ -64,7 +64,6 @@ const App: React.FC = () => {
     networks: [base],
   });
   const projectId = "0949d19c96a2c30fed8538ed50b2bc46";
-  const cfg = wagmiAdapter.wagmiConfig;
 
   const metadata = {
     name: config.appName || "Uniswap Widget",
