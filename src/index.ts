@@ -1,10 +1,23 @@
-import { type CreateConnectorFn } from 'wagmi';
-import { base } from '@reown/appkit/networks';
-import { Features } from '@reown/appkit/react';
+import { type CreateConnectorFn } from "wagmi";
+import { base } from "@reown/appkit/networks";
+import { Features } from "@reown/appkit/react";
 
 // Components
-export { default as SwapWidget } from './components/SwapWidget';
-export { Provider } from './components/Provider';
+export { default as SwapWidget } from "./components/SwapWidget";
+export { Provider } from "./components/Provider";
+
+// Networks
+export {
+  base,
+  mainnet,
+  polygon,
+  optimism,
+  arbitrum,
+  avalanche,
+  fantom,
+  moonbeam,
+  solana,
+} from "@reown/appkit/networks";
 
 // Constants
 export {
