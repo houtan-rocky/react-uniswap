@@ -8,6 +8,7 @@ import {
   darkTheme,
   lightTheme
 } from './types';
+import { Config } from 'wagmi';
 
 export { 
   SwapProps,
@@ -22,9 +23,5 @@ export {
 export const SwapWidget: FC<SwapProps>;
 export const Provider: FC<{
   children: React.ReactNode;
-  config?: {
-    appName?: string;
-    projectId?: string;
-    chains?: string[];
-  };
+  config: Config;
 }>; 
