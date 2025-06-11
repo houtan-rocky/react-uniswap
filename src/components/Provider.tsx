@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { createAppKit } from "@reown/appkit/react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { injected, walletConnect } from "wagmi/connectors";
 import type { ProviderProps } from "../";
 
 // Default query client
@@ -13,65 +12,43 @@ const queryClient = new QueryClient();
 
 export const Provider: React.FC<ProviderProps> = ({
   children,
-  config,
   projectId,
   networks,
-  defaultNetwork,
-  metadata = {
-    name: "Uniswap Widget",
-    description: "Uniswap Widget Integration",
-    url:
-      typeof window !== "undefined"
-        ? window.location.origin
-        : "https://uniswap.org",
-    icons: [],
-  },
+  metadata,
 }) => {
-  // Initialize AppKit
-  useMemo(() => {
+  // Initialize AppKit and WagmiAdapter
+  const wagmiAdapter = useMemo(() => {
     if (typeof window !== "undefined") {
-      // Create wallet connectors
-      const connectors = [
-        injected({
-          shimDisconnect: true,
-        }),
-        walletConnect({
-          projectId,
-          showQrModal: true,
-          metadata,
-        }),
-      ];
-
+      // Create Wagmi Adapter
       const adapter = new WagmiAdapter({
-        projectId,
         networks,
-        connectors,
-        ssr: false,
+        projectId,
+        ssr: true
       });
 
+      // Create modal
       createAppKit({
         adapters: [adapter],
         networks,
         projectId,
-        metadata: metadata,
+        metadata,
         features: {
-          analytics: true,
-          email: false,
-          socials: false,
-          allWallets: true,
-          emailShowWallets: false,
-          swaps: true,
-        },
-        enableInjected: true,
-        showWallets: true,
-        defaultNetwork: defaultNetwork,
-        themeMode: "light",
+          analytics: true // Optional - defaults to your Cloud configuration
+        }
       });
+
+      return adapter;
     }
-  }, [projectId, networks, defaultNetwork, metadata]);
+    return null;
+  }, [networks, projectId, metadata]);
+
+  // Don't render anything on the server
+  if (!wagmiAdapter) {
+    return null;
+  }
 
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );
