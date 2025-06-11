@@ -63,6 +63,7 @@ export interface ProviderProps {
   metadata?: AppKitMetadata;
   features?: AppKitFeatures;
   ssr?: boolean;
+  defaultNetwork?: AppKitNetwork;
 }
 
 // Wagmi types
