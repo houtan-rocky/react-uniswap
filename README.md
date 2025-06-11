@@ -5,29 +5,17 @@ A React component package for easily integrating Uniswap swap functionality into
 ## Installation
 
 ```bash
-npm install uniswap-widget-package
+npm install uniswap-widget-package @reown/appkit @reown/appkit-adapter-wagmi wagmi @tanstack/react-query
 # or
-yarn add uniswap-widget-package
+yarn add uniswap-widget-package @reown/appkit @reown/appkit-adapter-wagmi wagmi @tanstack/react-query
 # or
-pnpm add uniswap-widget-package
+pnpm add uniswap-widget-package @reown/appkit @reown/appkit-adapter-wagmi wagmi @tanstack/react-query
 ```
 
 ## Configuration
 
-### 1. Environment Variables
-Create a `.env.local` file in your Next.js project root with these variables:
-
-```env
-# Required: WalletConnect Project ID
-# Get yours at: https://cloud.walletconnect.com/
-NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your_project_id_here
-
-# Required: App Metadata (shown in wallet connection prompts)
-NEXT_PUBLIC_APP_NAME=Your App Name
-NEXT_PUBLIC_APP_DESCRIPTION=Your app description
-NEXT_PUBLIC_APP_URL=https://your-domain.com
-NEXT_PUBLIC_APP_ICON=https://your-icon-url.com/icon.png
-```
+### 1. WalletConnect Project ID
+Get your WalletConnect v2 Project ID at: https://cloud.walletconnect.com/
 
 ### 2. Provider Setup
 
@@ -36,16 +24,40 @@ Wrap your app with the Provider component:
 ```tsx
 // pages/_app.tsx or similar
 import { Provider } from 'uniswap-widget-package';
+import { base } from '@reown/appkit/networks';
+import { createConfig } from 'wagmi';
+
+// Create your wagmi config
+const wagmiConfig = createConfig({
+  // Your wagmi configuration here
+});
 
 export default function App({ Component, pageProps }) {
   return (
     <Provider
-      // Optional: Override default config
-      config={{
-        appName: process.env.NEXT_PUBLIC_APP_NAME,
-        projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
-        // Optional: Supported chains (defaults to all major EVM chains)
-        chains: ['ethereum', 'base', 'arbitrum'],
+      projectId="your_wallet_connect_project_id"
+      networks={[base]} // Must provide at least one network
+      config={wagmiConfig}
+      metadata={{
+        name: "Your App Name",
+        description: "Your app description",
+        url: "https://your-domain.com",
+        icons: ["https://your-icon-url.com/icon.png"]
+      }}
+      appKitConfig={{
+        debug: false,
+        enableCoinbase: false,
+        defaultNetwork: base,
+        features: {
+          analytics: false,
+          email: false,
+          socials: false,
+          allWallets: false,
+          emailShowWallets: false,
+          swaps: false
+        },
+        enableInjected: false,
+        showWallets: false
       }}
     >
       <Component {...pageProps} />
@@ -53,6 +65,17 @@ export default function App({ Component, pageProps }) {
   );
 }
 ```
+
+## Provider Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| projectId | string | Yes | Your WalletConnect v2 Project ID |
+| networks | Network[] | Yes | Array of supported networks (must have at least one) |
+| config | WagmiConfig | Yes | Wagmi configuration object |
+| connectors | CreateConnectorFn[] | No | Custom wallet connectors |
+| metadata | Metadata | No | App metadata for wallet connections |
+| appKitConfig | AppKitConfig | No | Configuration for AppKit features |
 
 ## Usage
 
@@ -83,13 +106,14 @@ export default function SwapPage() {
 
 ## Features
 
-- Easy integration with Next.js
-- Built-in wallet connection
+- Easy integration with Next.js and React
+- Built-in wallet connection via WalletConnect v2
 - Customizable UI
 - TypeScript support
 - Multi-chain support
 - Dark/Light theme
 - Customizable token lists
+- Configurable AppKit features
 
 ## License
 

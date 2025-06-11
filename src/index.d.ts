@@ -1,55 +1,48 @@
 import { FC } from "react";
-import {
-  SwapProps,
-  ThemeConfig,
-  TokenInfo,
-  PoolConfig,
-  SwapState,
-  darkTheme,
-  lightTheme,
-} from "./types";
-import { Config } from "wagmi";
-import { AppKitNetwork } from "@reown/appkit/networks";
 import { CreateConnectorFn } from "wagmi";
+import type { AppKitNetwork } from "@reown/appkit/networks";
+import type { Features } from "@reown/appkit/react";
 
-export {
-  SwapProps,
-  ThemeConfig,
-  TokenInfo,
-  PoolConfig,
-  SwapState,
-  lightTheme,
-  darkTheme,
-};
+export type AppKitFeatures = Features;
 
-export const SwapWidget: FC<SwapProps>;
+export interface AppKitMetadata {
+  name: string;
+  description: string;
+  url: string;
+  icons: string[];
+}
+
+export interface AppKitConfig {
+  debug?: boolean;
+  enableCoinbase?: boolean;
+  defaultNetwork?: AppKitNetwork;
+  features?: AppKitFeatures;
+  enableInjected?: boolean;
+  showWallets?: boolean;
+}
 
 export interface ProviderProps {
   children: React.ReactNode;
-  config: Config;
   projectId: string;
-  networks: [AppKitNetwork, ...AppKitNetwork[]]; // Ensure at least one network
+  networks: [AppKitNetwork, ...AppKitNetwork[]];
   connectors?: CreateConnectorFn[];
-  metadata?: {
-    name: string;
-    description: string;
-    url: string;
-    icons: string[];
-  };
-  appKitConfig?: {
-    debug?: boolean;
-    enableCoinbase?: boolean;
-    defaultNetwork?: AppKitNetwork;
-    features?: {
-      analytics?: boolean;
-      email?: boolean;
-      socials?: false | AppKitNetwork[];
-      allWallets?: boolean;
-      emailShowWallets?: boolean;
-      swaps?: boolean;
-    };
-    enableInjected?: boolean;
-    showWallets?: boolean;
-  };
+  metadata?: AppKitMetadata;
+  appKitConfig?: AppKitConfig;
 }
+
 export const Provider: FC<ProviderProps>;
+
+// Re-export types from the types module
+export type {
+  SwapProps,
+  ThemeConfig,
+  TokenInfo,
+  PoolConfig,
+  SwapState,
+} from "./types";
+
+// Re-export constants from the types module
+export { lightTheme, darkTheme } from "./types";
+
+// Export the SwapWidget component
+export { default as SwapWidget } from "./components/SwapWidget";

@@ -2,46 +2,13 @@
 
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider, type Config } from "wagmi";
+import { WagmiProvider } from "wagmi";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { CreateConnectorFn } from "wagmi";
-import { createAppKit, Features } from "@reown/appkit/react";
-import { base } from "@reown/appkit/networks";
-
-type AppKitNetwork = typeof base;
-
-export interface ProviderProps {
-  children: React.ReactNode;
-  config: Config;
-  projectId: string;
-  networks: [AppKitNetwork, ...AppKitNetwork[]]; // Ensure at least one network
-  connectors?: CreateConnectorFn[];
-  metadata?: {
-    name: string;
-    description: string;
-    url: string;
-    icons: string[];
-  };
-  appKitConfig?: {
-    debug?: boolean;
-    enableCoinbase?: boolean;
-    defaultNetwork?: AppKitNetwork;
-    features?: {
-      analytics?: boolean;
-      email?: boolean;
-      socials?: false | AppKitNetwork[];
-      allWallets?: boolean;
-      emailShowWallets?: boolean;
-      swaps?: boolean;
-    };
-    enableInjected?: boolean;
-    showWallets?: boolean;
-  };
-}
+import { createAppKit } from "@reown/appkit/react";
+import type { ProviderProps, AppKitFeatures } from "../";
 
 export const Provider: React.FC<ProviderProps> = ({
   children,
-  config,
   projectId,
   networks,
   connectors = [],
@@ -73,6 +40,9 @@ export const Provider: React.FC<ProviderProps> = ({
     networks,
   });
 
+  // Get the wagmi config from the adapter
+  const config = wagmiAdapter.wagmiConfig;
+
   // Initialize AppKit with provided configuration
   createAppKit({
     adapters: [wagmiAdapter],
@@ -82,7 +52,7 @@ export const Provider: React.FC<ProviderProps> = ({
     enableCoinbase: appKitConfig.enableCoinbase,
     defaultNetwork: appKitConfig.defaultNetwork || networks[0],
     metadata,
-    features: appKitConfig.features as Features,
+    features: appKitConfig.features as AppKitFeatures,
     enableInjected: appKitConfig.enableInjected,
     showWallets: appKitConfig.showWallets,
   });
