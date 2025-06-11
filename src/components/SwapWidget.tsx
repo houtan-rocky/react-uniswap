@@ -71,12 +71,11 @@ const SwapWidget: React.FC<SwapProps> = ({
   });
 
   useEffect(() => {
-    if (isConnected) {
-      setState((prev) => ({
-        ...prev,
-        inputDisabled: false,
-      }));
-    }
+    setState((prev) => ({
+      ...prev,
+      inputDisabled: !isConnected,
+      error: !isConnected ? "Please connect your wallet" : null,
+    }));
   }, [isConnected]);
 
   // Always call hooks, but pass undefined if no signer
@@ -121,6 +120,7 @@ const SwapWidget: React.FC<SwapProps> = ({
         style={{
           backgroundColor: theme.foreground,
           border: `1px solid ${theme.border}`,
+          opacity: !isConnected ? 0.5 : 1,
         }}
       >
         <label className="block mb-2" style={{ color: theme.textSecondary }}>
@@ -129,23 +129,26 @@ const SwapWidget: React.FC<SwapProps> = ({
         <div className="flex items-center">
           <input
             type="text"
-            disabled={state.inputDisabled}
+            disabled={!isConnected}
             value={state.inputAmount}
             onChange={handleInputAmountChange}
             className={twMerge(
               "w-full text-2xl outline-none",
-              state.inputDisabled && "opacity-50 cursor-not-allowed"
+              !isConnected && "cursor-not-allowed bg-gray-100"
             )}
             placeholder="0"
             inputMode="decimal"
             style={{
-              backgroundColor: theme.inputField.background,
-              color: theme.inputField.text,
+              backgroundColor: !isConnected ? "#f3f4f6" : theme.inputField.background,
+              color: !isConnected ? "#9ca3af" : theme.inputField.text,
             }}
           />
           <div className="flex flex-col gap-2">
             <div
-              className="ml-2 p-3 py-2 rounded-full flex items-center justify-center gap-2 min-w-[140px]"
+              className={twMerge(
+                "ml-2 p-3 py-2 rounded-full flex items-center justify-center gap-2 min-w-[140px]",
+                !isConnected && "opacity-50"
+              )}
               style={{
                 backgroundColor: theme.tokenButton.background,
                 border: `1px solid ${theme.tokenButton.border}`,
@@ -176,7 +179,10 @@ const SwapWidget: React.FC<SwapProps> = ({
       <div className="relative z-10 flex justify-center items-center h-[5px]">
         <div
           className="rounded-2xl w-[40px] h-[40px] flex justify-center items-center"
-          style={{ backgroundColor: theme.border }}
+          style={{ 
+            backgroundColor: theme.border,
+            opacity: !isConnected ? 0.5 : 1
+          }}
         >
           <IoMdArrowDown className="text-2xl" style={{ color: theme.text }} />
         </div>
@@ -188,6 +194,7 @@ const SwapWidget: React.FC<SwapProps> = ({
         style={{
           backgroundColor: theme.buySection.background,
           border: `1px solid ${theme.buySection.border}`,
+          opacity: !isConnected ? 0.5 : 1,
         }}
       >
         <label className="block mb-2" style={{ color: theme.textSecondary }}>
@@ -200,21 +207,24 @@ const SwapWidget: React.FC<SwapProps> = ({
               state.loading ? "Fetching Quotes" : state.outputAmount || "0"
             }
             readOnly
-            disabled={state.loading}
+            disabled={true}
             className={twMerge(
               "w-full text-2xl outline-none disabled:text-lg",
-              state.inputDisabled && "opacity-50 cursor-not-allowed"
+              !isConnected && "cursor-not-allowed bg-gray-100"
             )}
             style={{
-              backgroundColor: theme.inputField.background,
-              color: theme.inputField.text,
-              opacity: state.loading ? 0.3 : 0.8,
+              backgroundColor: !isConnected ? "#f3f4f6" : theme.inputField.background,
+              color: !isConnected ? "#9ca3af" : theme.inputField.text,
+              opacity: state.loading ? 0.3 : !isConnected ? 0.5 : 0.8,
             }}
             placeholder="0"
           />
           <div className="flex flex-col gap-2">
             <div
-              className="ml-2 p-3 py-2 rounded-full flex items-center justify-center gap-2 min-w-[140px]"
+              className={twMerge(
+                "ml-2 p-3 py-2 rounded-full flex items-center justify-center gap-2 min-w-[140px]",
+                !isConnected && "opacity-50"
+              )}
               style={{
                 backgroundColor: theme.tokenButton.background,
                 border: `1px solid ${theme.tokenButton.border}`,

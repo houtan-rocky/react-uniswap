@@ -117,39 +117,37 @@ export interface SwapState {
 }
 
 export interface ThemeConfig {
-  // Color scheme
-  primary: string;
-  secondary: string;
   background: string;
   foreground: string;
+  border: string;
   text: string;
   textSecondary: string;
-  border: string;
-  
-  // Component specific
   tokenButton: {
     background: string;
     text: string;
     border: string;
-    paddingY: number;
     paddingX: number;
+    paddingY: number;
+    hoverBackground?: string;
   };
   swapButton: {
     background: string;
     text: string;
-    hoverBackground: string;
     disabledBackground: string;
     disabledText: string;
+    hoverBackground?: string;
   };
   connectButton: {
     background: string;
     text: string;
-    hoverBackground: string;
+    hoverBackground?: string;
   };
   inputField: {
     background: string;
     text: string;
     placeholder: string;
+    disabledBackground: string;
+    disabledText: string;
   };
   buySection: {
     background: string;
@@ -173,47 +171,45 @@ export interface SwapProps {
 
 // Default themes
 export const lightTheme: ThemeConfig = {
-  primary: '#FF007A',
-  secondary: '#FFE6F3',
-  background: '#FCFAFE',
-  foreground: '#FFFFFF',
-  text: '#000000',
-  textSecondary: '#7D7D7D',
-  border: '#EBEBEB',
-  
+  background: "#ffffff",
+  foreground: "#ffffff",
+  border: "#e5e7eb",
+  text: "#111827",
+  textSecondary: "#6b7280",
   tokenButton: {
-    background: '#FFFFFF',
-    text: '#000000',
-    border: '#EBEBEB',
-    paddingY: 10,
-    paddingX: 10
+    background: "#f3f4f6",
+    text: "#111827",
+    border: "#e5e7eb",
+    paddingX: 12,
+    paddingY: 8,
+    hoverBackground: "#e5e7eb",
   },
   swapButton: {
-    background: '#FF007A',
-    text: '#FFFFFF',
-    hoverBackground: '#FF1A8C',
-    disabledBackground: '#E5E5E5',
-    disabledText: '#A3A3A3'
+    background: "#4f46e5",
+    text: "#ffffff",
+    disabledBackground: "#e5e7eb",
+    disabledText: "#9ca3af",
+    hoverBackground: "#4338ca",
   },
   connectButton: {
-    background: '#FFE6F3',
-    text: '#FF007A',
-    hoverBackground: '#FFD6EC'
+    background: "#4f46e5",
+    text: "#ffffff",
+    hoverBackground: "#4338ca",
   },
   inputField: {
-    background: 'transparent',
-    text: '#000000',
-    placeholder: '#A3A3A3'
+    background: "#ffffff",
+    text: "#111827",
+    placeholder: "#9ca3af",
+    disabledBackground: "#f3f4f6",
+    disabledText: "#9ca3af",
   },
   buySection: {
-    background: '#F5F5F5',
-    border: '#EBEBEB'
-  }
+    background: "#f9fafb",
+    border: "#e5e7eb",
+  },
 };
 
 export const darkTheme: ThemeConfig = {
-  primary: '#FF007A',
-  secondary: '#2D0219',
   background: '#191919',
   foreground: '#232323',
   text: '#FFFFFF',
@@ -242,7 +238,9 @@ export const darkTheme: ThemeConfig = {
   inputField: {
     background: 'transparent',
     text: '#FFFFFF',
-    placeholder: '#666666'
+    placeholder: '#666666',
+    disabledBackground: "#2D2D2D",
+    disabledText: "#666666"
   },
   buySection: {
     background: '#232323',
