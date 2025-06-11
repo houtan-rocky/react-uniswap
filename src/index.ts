@@ -2,20 +2,11 @@ import { type CreateConnectorFn } from 'wagmi';
 import { base } from '@reown/appkit/networks';
 import { Features } from '@reown/appkit/react';
 
-
-// Export the main SwapWidget component
+// Components
 export { default as SwapWidget } from './components/SwapWidget';
-
-// Export the Provider component for wallet management
 export { Provider } from './components/Provider';
 
-// Export configuration
-export { default as config } from "./config/env";
-
-// Export types for TypeScript users
-export * from "./types";
-
-// Export commonly used constants
+// Constants
 export {
   VIRTUAL_PROTOCOL_TOKEN,
   DEFAULT_SLIPPAGE,
@@ -24,7 +15,7 @@ export {
   SolaceTokenInfo,
 } from "./constants";
 
-// Re-export commonly used types
+// Types from ./types
 export type {
   SwapProps,
   ThemeConfig,
@@ -33,9 +24,10 @@ export type {
   SwapState,
 } from "./types";
 
+// Constants from ./types
 export { lightTheme, darkTheme } from "./types";
 
-// Re-export types
+// AppKit types
 export type AppKitNetwork = typeof base;
 export type AppKitFeatures = Features;
 
@@ -64,5 +56,5 @@ export interface ProviderProps {
   appKitConfig?: AppKitConfig;
 }
 
-// Re-export necessary wagmi types for convenience
+// Wagmi types
 export type { CreateConnectorFn };

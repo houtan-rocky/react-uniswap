@@ -3,6 +3,35 @@ import { CreateConnectorFn } from "wagmi";
 import type { AppKitNetwork } from "@reown/appkit/networks";
 import type { Features } from "@reown/appkit/react";
 
+// Components
+export const Provider: FC<ProviderProps>;
+export { default as SwapWidget } from "./components/SwapWidget";
+
+// Constants
+export {
+  VIRTUAL_PROTOCOL_TOKEN,
+  DEFAULT_SLIPPAGE,
+  DEFAULT_DEADLINE_MINUTES,
+  VritualProtocolTokenInfo,
+  SolaceTokenInfo,
+} from "./constants";
+
+// Configuration
+export { default as config } from "./config/env";
+
+// Types from ./types
+export type {
+  SwapProps,
+  ThemeConfig,
+  TokenInfo,
+  PoolConfig,
+  SwapState,
+} from "./types";
+
+// Constants from ./types
+export { lightTheme, darkTheme } from "./types";
+
+// AppKit types
 export type AppKitFeatures = Features;
 
 export interface AppKitMetadata {
@@ -30,19 +59,5 @@ export interface ProviderProps {
   appKitConfig?: AppKitConfig;
 }
 
-export const Provider: FC<ProviderProps>;
-
-// Re-export types from the types module
-export type {
-  SwapProps,
-  ThemeConfig,
-  TokenInfo,
-  PoolConfig,
-  SwapState,
-} from "./types";
-
-// Re-export constants from the types module
-export { lightTheme, darkTheme } from "./types";
-
-// Export the SwapWidget component
-export { default as SwapWidget } from "./components/SwapWidget";
+// Wagmi types
+export type { CreateConnectorFn };
