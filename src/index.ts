@@ -1,10 +1,11 @@
-import { type Config, type CreateConnectorFn } from "wagmi";
+import { type CreateConnectorFn } from "wagmi";
 import { base } from "@reown/appkit/networks";
 import { Features } from "@reown/appkit/react";
 
 // Components
 export { default as SwapWidget } from "./components/SwapWidget";
 export { Provider } from "./components/Provider";
+export type { ProviderProps } from "./components/Provider";
 
 // modal
 export { createAppKit, useAppKit } from "@reown/appkit/react";
@@ -53,17 +54,6 @@ export interface AppKitMetadata {
   description: string;
   url: string;
   icons: string[];
-}
-
-export interface ProviderProps {
-  children: React.ReactNode;
-  config: Config;
-  projectId: string;
-  networks: [AppKitNetwork, ...AppKitNetwork[]];
-  metadata?: AppKitMetadata;
-  features?: AppKitFeatures;
-  ssr?: boolean;
-  defaultNetwork?: AppKitNetwork;
 }
 
 // Wagmi types

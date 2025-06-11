@@ -1,9 +1,15 @@
 import { FC } from "react";
 import { CreateConnectorFn } from "wagmi";
-import { ProviderProps } from "./components/Provider";
 import type { Features } from "@reown/appkit/react";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { QueryClient } from "@tanstack/react-query";
 
 // Components
+export interface ProviderProps {
+  children: React.ReactNode;
+  wagmiAdapter: WagmiAdapter;
+  queryClient?: QueryClient;
+}
 export const Provider: FC<ProviderProps>;
 export { default as SwapWidget } from "./components/SwapWidget";
 
@@ -53,8 +59,6 @@ export interface AppKitMetadata {
   url: string;
   icons: string[];
 }
-
-export type { ProviderProps } from "./components/Provider";
 
 // Wagmi types
 export type { CreateConnectorFn };

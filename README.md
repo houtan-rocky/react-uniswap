@@ -19,48 +19,51 @@ Get your WalletConnect v2 Project ID at: https://cloud.walletconnect.com/
 
 ### 2. Provider Setup
 
-Wrap your app with the Provider component:
+Set up the Provider with WagmiAdapter and AppKit:
 
 ```tsx
-// pages/_app.tsx or similar
-import { Provider } from 'uniswap-widget-package';
+import { Provider, createAppKit } from 'uniswap-widget-package';
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { base } from '@reown/appkit/networks';
-import { createConfig } from 'wagmi';
+import { QueryClient } from '@tanstack/react-query';
 
-// Create your wagmi config
-const wagmiConfig = createConfig({
-  // Your wagmi configuration here
+// Setup
+const projectId = 'your_project_id';
+const queryClient = new QueryClient();
+
+// Create Wagmi Adapter
+const wagmiAdapter = new WagmiAdapter({
+  projectId,
+  networks: [base],
+  ssr: true
 });
 
-export default function App({ Component, pageProps }) {
+// Create modal
+createAppKit({
+  adapters: [wagmiAdapter],
+  networks: [base],
+  projectId,
+  metadata: {
+    name: "Your App Name",
+    description: "Your app description",
+    url: "https://your-domain.com",
+    icons: ["https://your-icon-url.com"],
+  },
+  features: {
+    analytics: true,
+    email: false,
+    socials: [],
+    allWallets: true,
+    emailShowWallets: true,
+    swaps: false,
+  }
+});
+
+// Wrap your app with the Provider
+export default function App({ children }) {
   return (
-    <Provider
-      projectId="your_wallet_connect_project_id"
-      networks={[base]} // Must provide at least one network
-      config={wagmiConfig}
-      metadata={{
-        name: "Your App Name",
-        description: "Your app description",
-        url: "https://your-domain.com",
-        icons: ["https://your-icon-url.com/icon.png"]
-      }}
-      appKitConfig={{
-        debug: false,
-        enableCoinbase: false,
-        defaultNetwork: base,
-        features: {
-          analytics: false,
-          email: false,
-          socials: false,
-          allWallets: false,
-          emailShowWallets: false,
-          swaps: false
-        },
-        enableInjected: false,
-        showWallets: false
-      }}
-    >
-      <Component {...pageProps} />
+    <Provider wagmiAdapter={wagmiAdapter} queryClient={queryClient}>
+      {children}
     </Provider>
   );
 }
@@ -70,12 +73,9 @@ export default function App({ Component, pageProps }) {
 
 | Prop | Type | Required | Description |
 |------|------|----------|-------------|
-| projectId | string | Yes | Your WalletConnect v2 Project ID |
-| networks | Network[] | Yes | Array of supported networks (must have at least one) |
-| config | WagmiConfig | Yes | Wagmi configuration object |
-| connectors | CreateConnectorFn[] | No | Custom wallet connectors |
-| metadata | Metadata | No | App metadata for wallet connections |
-| appKitConfig | AppKitConfig | No | Configuration for AppKit features |
+| wagmiAdapter | WagmiAdapter | Yes | Configured WagmiAdapter instance |
+| queryClient | QueryClient | No | React Query client instance (defaults to new QueryClient) |
+| children | ReactNode | Yes | Child components |
 
 ## Usage
 
@@ -83,15 +83,28 @@ export default function App({ Component, pageProps }) {
 import { SwapWidget } from 'uniswap-widget-package';
 
 export default function SwapPage() {
+  const handleSwap = async (inputAmount: string, outputAmount: string) => {
+    console.log("Swap:", { inputAmount, outputAmount });
+    // Add your swap logic here
+  };
+
   return (
     <SwapWidget 
-      // Optional: Configure widget
-      config={{
-        defaultInputToken: 'ETH',
-        defaultOutputToken: 'USDC',
-        theme: 'dark', // or 'light'
-        slippageTolerance: 0.5, // 0.5%
-        deadlineMinutes: 20,
+      poolConfig={{
+        tokenIn: {
+          // Your token configuration
+        },
+        tokenOut: {
+          // Your token configuration
+        },
+        poolAddress: "your_pool_address",
+        version: "V2"
+      }}
+      allowTokenChange={true}
+      onSwap={handleSwap}
+      searchConfig={{
+        enabled: true,
+        chainIds: [8453] // Base chain
       }}
     />
   );
@@ -101,19 +114,26 @@ export default function SwapPage() {
 ## Requirements
 
 - React 18 or higher
-- Next.js 13 or higher
 - Valid WalletConnect v2 Project ID
+- Supported networks configuration
 
 ## Features
 
-- Easy integration with Next.js and React
+- Easy integration with React applications
 - Built-in wallet connection via WalletConnect v2
 - Customizable UI
 - TypeScript support
 - Multi-chain support
-- Dark/Light theme
-- Customizable token lists
+- SSR support
+- Mobile wallet support
 - Configurable AppKit features
+
+## Environment Variables
+
+```env
+VITE_REOWN_PROJECT_ID=your_project_id
+VITE_APP_URL=your_app_url
+```
 
 ## License
 

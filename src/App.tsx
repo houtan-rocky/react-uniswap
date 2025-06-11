@@ -5,6 +5,8 @@ import SwapWidget from "./components/SwapWidget";
 import { TokenInfo } from "./types";
 import { base } from "@reown/appkit/networks";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { QueryClient } from "@tanstack/react-query";
+import { createAppKit } from "@reown/appkit/react";
 
 const SOLACE_TOKEN = {
   chainId: 8453,
@@ -49,23 +51,47 @@ const poolConfig = {
   version: "V2" as const,
 };
 // project id is a76ff31b5428ab5acc3b017e142d6365
-const projectId = import.meta.env.VITE_REOWN_PROJECT_ID || "a76ff31b5428ab5acc3b017e142d6365";
+const projectId =
+  import.meta.env.VITE_REOWN_PROJECT_ID || "a76ff31b5428ab5acc3b017e142d6365";
 
 // Create a basic wagmi config
-  // const wagmiConfig = createConfig({
-  //   chains: [base],
-  //   transports: {
-  //     [base.id]: http(),
-  //   },
-  // });
+// const wagmiConfig = createConfig({
+//   chains: [base],
+//   transports: {
+//     [base.id]: http(),
+//   },
+// });
 
+// Setup
+const queryClient = new QueryClient();
+
+// Create Wagmi Adapter
 const wagmiAdapter = new WagmiAdapter({
   projectId,
-  connectors: [],
   networks: [base],
+  ssr: true,
 });
 
-const wagmiConfig = wagmiAdapter.wagmiConfig;
+// Create modal
+createAppKit({
+  adapters: [wagmiAdapter],
+  networks: [base],
+  projectId,
+  metadata: {
+    name: "Uniswap Widget",
+    description: "Uniswap Widget Integration",
+    url: import.meta.env.VITE_APP_URL || "https://uniswap.org",
+    icons: ["https://avatars.githubusercontent.com/u/179229932"],
+  },
+  features: {
+    analytics: true,
+    email: false,
+    socials: [],
+    allWallets: true,
+    emailShowWallets: true,
+    swaps: false,
+  },
+});
 
 const App: React.FC = () => {
   const handleSwap = async (inputAmount: string, outputAmount: string) => {
@@ -76,7 +102,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Provider config={wagmiConfig} projectId={projectId} networks={[base]} defaultNetwork={base}>
+      <Provider wagmiAdapter={wagmiAdapter} queryClient={queryClient}>
         <SwapWidget
           poolConfig={poolConfig}
           allowTokenChange={true}
