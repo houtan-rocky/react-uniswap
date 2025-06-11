@@ -9,10 +9,12 @@ import { TokenSwapper } from "../libs/trading";
  * Custom hook to get quotes using callStatic
  */
 export default function useQuote({
+  signer,
   state,
   setState,
   poolConfig,
 }: {
+  signer: ethers.Signer;
   state: SwapState;
   setState: React.Dispatch<React.SetStateAction<SwapState>>;
   poolConfig: PoolConfig;
@@ -23,10 +25,10 @@ export default function useQuote({
 
   useEffect(() => {
     // Initialize tokens from pool config
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       inputToken: poolConfig.tokenIn,
-      outputToken: poolConfig.tokenOut
+      outputToken: poolConfig.tokenOut,
     }));
   }, [poolConfig]);
 
@@ -75,14 +77,22 @@ export default function useQuote({
         }
 
         // Create TokenSwapper instance
-        const swapper = new TokenSwapper(poolConfig);
+        const swapper = new TokenSwapper(
+          signer,
+          state.inputToken?.address as string,
+          state.outputToken?.address as string,
+        );
 
-        const simulationResult = await swapper.simulateTransaction(amountInWei.toString());
+        const simulationResult = await swapper.simulateTransaction(
+          amountInWei.toString()
+        );
         if (simulationResult !== "Ok") {
           throw new Error(`Quote simulation failed: ${simulationResult}`);
         }
 
-        const quotedAmountOut = await swapper.getQuotedAmount(amountInWei.toString());
+        const quotedAmountOut = await swapper.getQuotedAmount(
+          amountInWei.toString()
+        );
         const outDecimals = await swapper.getTokenOutDecimals();
 
         if (abortController.current?.signal.aborted) {
@@ -95,22 +105,22 @@ export default function useQuote({
           routeInfo: {
             isDirectRoute: true,
             routeString: `Direct via ${poolConfig.tokenIn.symbol}/${poolConfig.tokenOut.symbol} Pool`,
-            routeType: poolConfig.version
+            routeType: poolConfig.version,
           },
         }));
       } catch (err) {
         if (abortController.current?.signal.aborted) {
           return;
         }
-        
+
         console.error("Error getting quote:", err);
-        
+
         let errorMessage = "Failed to get quote";
-        
+
         if (err instanceof Error) {
           errorMessage = err.message;
         }
-        
+
         setState((prev) => ({
           ...prev,
           outputAmount: "",

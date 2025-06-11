@@ -79,7 +79,7 @@ const SwapWidget: React.FC<SwapProps> = ({
     }
   }, [isConnected]);
 
-  useQuote({ state, setState, poolConfig });
+  useQuote({ state, setState, poolConfig, signer: signer!});
   const { swap } = useSwap({ state, setState, onSwap, signer: signer! });
 
   const handleSwap = async () => {

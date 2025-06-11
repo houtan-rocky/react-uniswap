@@ -17,10 +17,9 @@ export default function useSwap({
   async function swap() {
     setState((prev) => ({ ...prev, txLoading: true }));
     const swapper = new TokenSwapper(
+      signer,
       state.inputToken?.address as string,
       state.outputToken?.address as string,
-      undefined,
-      signer
     );
     try {
       console.log("Initial Token in balance:", await swapper.getTokenInBalance());

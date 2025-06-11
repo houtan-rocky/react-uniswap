@@ -48,10 +48,10 @@ export class TokenSwapper {
   private routerAddress?: string;
 
   constructor(
+    signer: ethers.Signer,
     tokenInAddressOrConfig: string | PoolConfig,
     tokenOutAddress?: string,
-    routerAddress?: string,
-    signer?: ethers.Signer
+    routerAddress?: string
   ) {
     if (typeof tokenInAddressOrConfig === "string" && tokenOutAddress) {
       this.tokenInAddress = toChecksumAddress(tokenInAddressOrConfig);
