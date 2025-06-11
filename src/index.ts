@@ -6,6 +6,10 @@ import { Features } from "@reown/appkit/react";
 export { default as SwapWidget } from "./components/SwapWidget";
 export { Provider } from "./components/Provider";
 
+// modal
+export { createAppKit, useAppKit } from "@reown/appkit/react";
+export { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+
 // Networks
 export {
   base,
