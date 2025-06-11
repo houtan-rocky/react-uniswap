@@ -48,10 +48,10 @@ export class TokenSwapper {
   private routerAddress?: string;
 
   constructor(
-    signer: ethers.Signer,
     tokenInAddressOrConfig: string | PoolConfig,
     tokenOutAddress?: string,
-    routerAddress?: string
+    routerAddress?: string,
+    signer?: ethers.Signer
   ) {
     if (typeof tokenInAddressOrConfig === "string" && tokenOutAddress) {
       this.tokenInAddress = toChecksumAddress(tokenInAddressOrConfig);
@@ -73,9 +73,15 @@ export class TokenSwapper {
   }
 
   private async initialize() {
-    if (!this.signer || !this.provider) {
+    if (!this.signer) {
       throw new Error("Signer not provided");
     }
+
+    const provider = this.signer.provider;
+    if (!provider) {
+      throw new Error("Provider not found");
+    }
+    this.provider = provider;
 
     if (!this.router) {
       this.router = new ethers.Contract(

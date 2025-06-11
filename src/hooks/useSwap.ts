@@ -11,15 +11,21 @@ export default function useSwap({
   state: SwapState; 
   setState: React.Dispatch<React.SetStateAction<SwapState>>;
   onSwap?: (inputAmount: string, outputAmount: string) => Promise<void>;
-  signer: ethers.Signer;
+  signer?: ethers.Signer;
 }) {
 
   async function swap() {
+    if (!signer) {
+      setState(prev => ({ ...prev, error: "Please connect your wallet" }));
+      return;
+    }
+
     setState((prev) => ({ ...prev, txLoading: true }));
     const swapper = new TokenSwapper(
-      signer,
       state.inputToken?.address as string,
       state.outputToken?.address as string,
+      undefined,
+      signer
     );
     try {
       console.log("Initial Token in balance:", await swapper.getTokenInBalance());
@@ -44,6 +50,7 @@ export default function useSwap({
 
     } catch (error) {
       console.error("Error in main:", error);
+      setState(prev => ({ ...prev, error: error instanceof Error ? error.message : "Swap failed" }));
     } finally {
       setState((prev) => ({ ...prev, txLoading: false }));
     }

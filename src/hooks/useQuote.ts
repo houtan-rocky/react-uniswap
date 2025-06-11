@@ -14,7 +14,7 @@ export default function useQuote({
   setState,
   poolConfig,
 }: {
-  signer: ethers.Signer;
+  signer?: ethers.Signer;
   state: SwapState;
   setState: React.Dispatch<React.SetStateAction<SwapState>>;
   poolConfig: PoolConfig;
@@ -44,6 +44,15 @@ export default function useQuote({
     async function updateQuote() {
       if (!state.inputAmount || Number(state.inputAmount) === 0) {
         setState((prev) => ({ ...prev, outputAmount: "" }));
+        return;
+      }
+
+      if (!signer) {
+        setState((prev) => ({ 
+          ...prev, 
+          outputAmount: "",
+          error: "Please connect your wallet to get quotes"
+        }));
         return;
       }
 
@@ -78,9 +87,10 @@ export default function useQuote({
 
         // Create TokenSwapper instance
         const swapper = new TokenSwapper(
-          signer,
           state.inputToken?.address as string,
           state.outputToken?.address as string,
+          undefined,
+          signer
         );
 
         const simulationResult = await swapper.simulateTransaction(
@@ -146,5 +156,7 @@ export default function useQuote({
         abortController.current.abort();
       }
     };
-  }, [state.inputAmount, poolConfig]);
+  }, [state.inputAmount, poolConfig, signer]);
+
+  return;
 }

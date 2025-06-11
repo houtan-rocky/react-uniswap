@@ -79,10 +79,15 @@ const SwapWidget: React.FC<SwapProps> = ({
     }
   }, [isConnected]);
 
-  useQuote({ state, setState, poolConfig, signer: signer!});
-  const { swap } = useSwap({ state, setState, onSwap, signer: signer! });
+  // Always call hooks, but pass undefined if no signer
+  useQuote({ state, setState, poolConfig, signer: signer || undefined });
+  const { swap } = useSwap({ state, setState, onSwap, signer: signer || undefined });
 
   const handleSwap = async () => {
+    if (!signer) {
+      setState(prev => ({ ...prev, error: "Please connect your wallet" }));
+      return;
+    }
     setIsSwapping(true);
     try {
       await swap();
@@ -239,7 +244,7 @@ const SwapWidget: React.FC<SwapProps> = ({
 
       {/* Error Message */}
       {state.error && (
-        <div className="mb-2 p-4 bg-red-50 text-red-500 rounded-2xl">
+        <div className="mb-2 p-4 bg-red-50 text-red-500 rounded-2xl overflow-x-hidden">
           {state.error}
         </div>
       )}
