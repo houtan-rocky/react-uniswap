@@ -4,9 +4,7 @@ import { Provider } from "./components/Provider";
 import SwapWidget from "./components/SwapWidget";
 import { TokenInfo } from "./types";
 import { base } from "@reown/appkit/networks";
-import config from "./config/env";
 import { createConfig, http } from "wagmi";
-import { createClient } from "viem";
 
 const SOLACE_TOKEN = {
   chainId: 8453,
