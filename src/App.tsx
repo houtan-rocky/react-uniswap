@@ -4,7 +4,6 @@ import { Provider } from "./components/Provider";
 import SwapWidget from "./components/SwapWidget";
 import { TokenInfo } from "./types";
 import { base } from "@reown/appkit/networks";
-import { createConfig, http } from "wagmi";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 
 const SOLACE_TOKEN = {
@@ -49,8 +48,8 @@ const poolConfig = {
   poolAddress: SOLACE_VIRTUAL_POOL,
   version: "V2" as const,
 };
-
-const projectId = "0949d19c96a2c30fed8538ed50b2bc46";
+// project id is a76ff31b5428ab5acc3b017e142d6365
+const projectId = import.meta.env.VITE_REOWN_PROJECT_ID || "a76ff31b5428ab5acc3b017e142d6365";
 
 // Create a basic wagmi config
   // const wagmiConfig = createConfig({
