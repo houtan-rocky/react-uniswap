@@ -17,15 +17,24 @@ export const Provider: React.FC<ProviderProps> = ({
   projectId,
   networks,
   defaultNetwork,
+  metadata = {
+    name: "Uniswap Widget",
+    description: "Uniswap Widget Integration",
+    url:
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://uniswap.org",
+    icons: [],
+  },
 }) => {
   // Initialize AppKit
   useMemo(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Create injected connector with specific configuration
       const injectedConnector = injected({
         shimDisconnect: true,
       });
-      
+
       const adapter = new WagmiAdapter({
         projectId,
         networks,
@@ -37,12 +46,7 @@ export const Provider: React.FC<ProviderProps> = ({
         adapters: [adapter],
         networks,
         projectId,
-        metadata: {
-          name: "Uniswap Widget",
-          description: "Uniswap Widget Integration",
-          url: typeof window !== 'undefined' ? window.location.origin : "https://uniswap.org",
-          icons: [],
-        },
+        metadata: metadata,
         features: {
           analytics: true,
           email: false,
@@ -54,16 +58,14 @@ export const Provider: React.FC<ProviderProps> = ({
         enableInjected: true,
         showWallets: true,
         defaultNetwork: defaultNetwork,
-        themeMode: 'light',
+        themeMode: "light",
       });
     }
-  }, [config, networks, projectId, defaultNetwork]);
+  }, []);
 
   return (
     <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );
 };
