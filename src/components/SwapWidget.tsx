@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
+import { ethers } from "ethers";
 import { DEFAULT_POOL_CONFIG } from "../config/tokens";
 import { SwapState, SwapProps, lightTheme, ThemeConfig } from "../types";
 import useQuote from "../hooks/useQuote";
@@ -15,7 +16,20 @@ const SwapWidget: React.FC<SwapProps> = ({
 }) => {
   const { open } = useAppKit();
   const { isConnected } = useAccount();
+  const { data: walletClient } = useWalletClient();
   const [isSwapping, setIsSwapping] = useState(false);
+
+  const signer = useMemo(() => {
+    if (!walletClient) return undefined;
+    const { account, chain, transport } = walletClient;
+    const network = {
+      chainId: chain.id,
+      name: chain.name,
+      ensAddress: chain.contracts?.ensRegistry?.address,
+    };
+    const provider = new ethers.providers.Web3Provider(transport, network);
+    return provider.getSigner(account.address);
+  }, [walletClient]);
 
   // Merge custom theme with default light theme
   const theme = useMemo<ThemeConfig>(
@@ -66,7 +80,7 @@ const SwapWidget: React.FC<SwapProps> = ({
   }, [isConnected]);
 
   useQuote({ state, setState, poolConfig });
-  const { swap } = useSwap({ state, setState, onSwap });
+  const { swap } = useSwap({ state, setState, onSwap, signer: signer! });
 
   const handleSwap = async () => {
     setIsSwapping(true);
