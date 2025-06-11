@@ -7,6 +7,19 @@ import type { Features } from "@reown/appkit/react";
 export const Provider: FC<ProviderProps>;
 export { default as SwapWidget } from "./components/SwapWidget";
 
+// Networks
+export {
+  base,
+  mainnet,
+  polygon,
+  optimism,
+  arbitrum,
+  avalanche,
+  fantom,
+  moonbeam,
+  solana,
+} from "@reown/appkit/networks";
+
 // Constants
 export {
   VIRTUAL_PROTOCOL_TOKEN,
@@ -41,22 +54,13 @@ export interface AppKitMetadata {
   icons: string[];
 }
 
-export interface AppKitConfig {
-  debug?: boolean;
-  enableCoinbase?: boolean;
-  defaultNetwork?: AppKitNetwork;
-  features?: AppKitFeatures;
-  enableInjected?: boolean;
-  showWallets?: boolean;
-}
-
 export interface ProviderProps {
   children: React.ReactNode;
   projectId: string;
   networks: [AppKitNetwork, ...AppKitNetwork[]];
-  connectors?: CreateConnectorFn[];
   metadata?: AppKitMetadata;
-  appKitConfig?: AppKitConfig;
+  features?: AppKitFeatures;
+  ssr?: boolean;
 }
 
 // Wagmi types

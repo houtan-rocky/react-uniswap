@@ -5,72 +5,41 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { createAppKit } from "@reown/appkit/react";
-import { walletConnect } from "wagmi/connectors";
-import type { ProviderProps, AppKitFeatures } from "../";
+import type { ProviderProps } from "../";
+
+// Default query client
+const queryClient = new QueryClient();
 
 export const Provider: React.FC<ProviderProps> = ({
   children,
   projectId,
   networks,
-  connectors = [],
-  metadata = {
-    name: "Uniswap Widget",
-    description: "Uniswap Widget Integration",
-    url: "https://uniswap.org",
-    icons: [],
-  },
-  appKitConfig = {
-    debug: false,
-    enableCoinbase: false,
-    features: {
-      analytics: false,
-      email: false,
-      socials: false,
-      allWallets: false,
-      emailShowWallets: false,
-      swaps: false,
-    },
-    enableInjected: true,
-    showWallets: true,
-  },
+  metadata,
+  features,
+  ssr = true,
 }) => {
-  // Create WalletConnect connector
-  const walletConnectConnector = walletConnect({
-    projectId,
-    metadata,
-    showQrModal: true,
-  });
-
-  // Create adapter with provided configuration
+  // Create Wagmi Adapter
   const wagmiAdapter = new WagmiAdapter({
     projectId,
-    connectors: [walletConnectConnector, ...connectors],
     networks,
+    ssr,
   });
 
-  // Get the wagmi config from the adapter
-  const config = wagmiAdapter.wagmiConfig;
-
-  // Initialize AppKit with provided configuration
+  // Initialize AppKit
   createAppKit({
     adapters: [wagmiAdapter],
-    projectId,
     networks,
-    debug: appKitConfig.debug,
-    enableCoinbase: appKitConfig.enableCoinbase,
-    defaultNetwork: appKitConfig.defaultNetwork || networks[0],
+    projectId,
     metadata,
-    features: appKitConfig.features as AppKitFeatures,
-    enableInjected: appKitConfig.enableInjected,
-    showWallets: appKitConfig.showWallets,
+    features,
   });
 
   return React.createElement(
     WagmiProvider,
-    { config },
+    { config: wagmiAdapter.wagmiConfig },
     React.createElement(
       QueryClientProvider,
-      { client: new QueryClient() },
+      { client: queryClient },
       children
     )
   );

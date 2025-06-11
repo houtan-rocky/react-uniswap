@@ -55,22 +55,13 @@ export interface AppKitMetadata {
   icons: string[];
 }
 
-export interface AppKitConfig {
-  debug?: boolean;
-  enableCoinbase?: boolean;
-  defaultNetwork?: AppKitNetwork;
-  features?: AppKitFeatures;
-  enableInjected?: boolean;
-  showWallets?: boolean;
-}
-
 export interface ProviderProps {
   children: React.ReactNode;
   projectId: string;
   networks: [AppKitNetwork, ...AppKitNetwork[]];
-  connectors?: CreateConnectorFn[];
   metadata?: AppKitMetadata;
-  appKitConfig?: AppKitConfig;
+  features?: AppKitFeatures;
+  ssr?: boolean;
 }
 
 // Wagmi types
