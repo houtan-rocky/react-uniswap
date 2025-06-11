@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { createAppKit } from "@reown/appkit/react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { injected } from "wagmi/connectors";
+import { injected, walletConnect } from "wagmi/connectors";
 import type { ProviderProps } from "../";
 
 // Default query client
@@ -30,15 +30,22 @@ export const Provider: React.FC<ProviderProps> = ({
   // Initialize AppKit
   useMemo(() => {
     if (typeof window !== "undefined") {
-      // Create injected connector with specific configuration
-      const injectedConnector = injected({
-        shimDisconnect: true,
-      });
+      // Create wallet connectors
+      const connectors = [
+        injected({
+          shimDisconnect: true,
+        }),
+        walletConnect({
+          projectId,
+          showQrModal: true,
+          metadata,
+        }),
+      ];
 
       const adapter = new WagmiAdapter({
         projectId,
         networks,
-        connectors: [injectedConnector],
+        connectors,
         ssr: false,
       });
 
@@ -61,7 +68,7 @@ export const Provider: React.FC<ProviderProps> = ({
         themeMode: "light",
       });
     }
-  }, []);
+  }, [projectId, networks, defaultNetwork, metadata]);
 
   return (
     <WagmiProvider config={config}>
