@@ -5,6 +5,7 @@ import SwapWidget from "./components/SwapWidget";
 import { TokenInfo } from "./types";
 import { base } from "@reown/appkit/networks";
 import { createConfig, http } from "wagmi";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 
 const SOLACE_TOKEN = {
   chainId: 8453,
@@ -52,12 +53,20 @@ const poolConfig = {
 const projectId = "0949d19c96a2c30fed8538ed50b2bc46";
 
 // Create a basic wagmi config
-const wagmiConfig = createConfig({
-  chains: [base],
-  transports: {
-    [base.id]: http(),
-  },
+  // const wagmiConfig = createConfig({
+  //   chains: [base],
+  //   transports: {
+  //     [base.id]: http(),
+  //   },
+  // });
+
+const wagmiAdapter = new WagmiAdapter({
+  projectId,
+  connectors: [],
+  networks: [base],
 });
+
+const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 const App: React.FC = () => {
   const handleSwap = async (inputAmount: string, outputAmount: string) => {
