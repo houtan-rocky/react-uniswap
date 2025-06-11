@@ -30,7 +30,7 @@ export interface ProviderProps {
 
 const queryClient = new QueryClient();
 
-export default function Provider({
+export function Provider({
   children,
   projectId,
   networks,
