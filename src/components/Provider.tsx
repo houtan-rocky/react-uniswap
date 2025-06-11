@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { createAppKit } from "@reown/appkit/react";
+import { walletConnect } from "wagmi/connectors";
 import type { ProviderProps, AppKitFeatures } from "../";
 
 export const Provider: React.FC<ProviderProps> = ({
@@ -29,14 +30,21 @@ export const Provider: React.FC<ProviderProps> = ({
       emailShowWallets: false,
       swaps: false,
     },
-    enableInjected: false,
-    showWallets: false,
+    enableInjected: true,
+    showWallets: true,
   },
 }) => {
+  // Create WalletConnect connector
+  const walletConnectConnector = walletConnect({
+    projectId,
+    metadata,
+    showQrModal: true,
+  });
+
   // Create adapter with provided configuration
   const wagmiAdapter = new WagmiAdapter({
     projectId,
-    connectors,
+    connectors: [walletConnectConnector, ...connectors],
     networks,
   });
 
