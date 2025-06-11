@@ -5,6 +5,8 @@ import SwapWidget from "./components/SwapWidget";
 import { TokenInfo } from "./types";
 import { base } from "@reown/appkit/networks";
 import config from "./config/env";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { createAppKit } from "@reown/appkit";
 
 const SOLACE_TOKEN = {
   chainId: 8453,
@@ -49,6 +51,31 @@ const poolConfig = {
   version: "V2" as const,
 };
 
+const projectId = "0949d19c96a2c30fed8538ed50b2bc46";
+
+const wagmiAdapter = new WagmiAdapter({
+  projectId,
+  networks: [base],
+  ssr: true,
+});
+
+const wagmiConfig = wagmiAdapter.wagmiConfig;
+
+createAppKit({
+  adapters: [wagmiAdapter],
+  networks: [base],
+  projectId,
+  metadata: {
+    name: "Uniswap Widget",
+    description: "Uniswap Widget Integration",
+    url: "https://uniswap.org",
+    icons: [],
+  },
+  features: {
+    analytics: true, // Optional - defaults to your Cloud configuration
+  },
+});
+
 const App: React.FC = () => {
   const handleSwap = async (inputAmount: string, outputAmount: string) => {
     console.log("Custom swap handler:", { inputAmount, outputAmount });
@@ -58,10 +85,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Provider
-        projectId={config.projectId}
-        networks={[base]}
-      >
+      <Provider config={wagmiConfig} projectId={config.projectId} networks={[base]}>
         <SwapWidget
           poolConfig={poolConfig}
           allowTokenChange={true}
