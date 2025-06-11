@@ -1,6 +1,6 @@
 import { TokenSwapper } from "../libs/trading";
 import { SwapState } from "../types";
-import { ethers } from "ethers";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 
 export default function useSwap({ 
   state, 
@@ -11,30 +11,37 @@ export default function useSwap({
   setState: React.Dispatch<React.SetStateAction<SwapState>>;
   onSwap?: (inputAmount: string, outputAmount: string) => Promise<void>;
 }) {
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
+  const { address } = useAccount();
 
   async function swap() {
+    if (!walletClient || !publicClient || !address) {
+      throw new Error("Wallet not connected");
+    }
+
     setState((prev) => ({ ...prev, txLoading: true }));
-    const swapper = new TokenSwapper(
-      state.inputToken?.address as string,
-      state.outputToken?.address as string
-    );
+    
     try {
+      const swapper = new TokenSwapper(
+        state.inputToken?.address as string,
+        state.outputToken?.address as string,
+        undefined, // default router address
+        publicClient,
+        walletClient
+      );
+
       console.log("Initial Token in balance:", await swapper.getTokenInBalance());
       console.log("Initial Token Out balance:", await swapper.getTokenOutBalance());
 
-      const signer = await swapper.getSignerAddress();
       const txHash = await swapper.executeSwap(
         state.inputAmount,
         state.outputAmount,
-        signer,
+        address
       );
 
       // Wait for transaction to be mined
-      if (!window.ethereum) throw new Error("No Web3 Provider found");
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum as unknown as ethers.providers.ExternalProvider
-      );
-      await provider.waitForTransaction(txHash);
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
 
       // Call onSwap callback if provided
       if (onSwap) {
@@ -42,7 +49,8 @@ export default function useSwap({
       }
 
     } catch (error) {
-      console.error("Error in main:", error);
+      console.error("Error in swap:", error);
+      throw error;
     } finally {
       setState((prev) => ({ ...prev, txLoading: false }));
     }
