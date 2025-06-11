@@ -4,8 +4,6 @@ import { Provider } from "./components/Provider";
 import SwapWidget from "./components/SwapWidget";
 import { TokenInfo } from "./types";
 import { base } from "@reown/appkit/networks";
-import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { createAppKit } from "@reown/appkit/react";
 import config from "./config/env";
 
 const SOLACE_TOKEN = {
@@ -58,45 +56,10 @@ const App: React.FC = () => {
     // Add your custom swap logic here
   };
 
-  const wagmiAdapter = new WagmiAdapter({
-    projectId: "0949d19c96a2c30fed8538ed50b2bc46",
-    connectors: [],
-    networks: [base],
-  });
-  const projectId = "0949d19c96a2c30fed8538ed50b2bc46";
-
-  const metadata = {
-    name: config.appName || "Uniswap Widget",
-    description: config.appDescription || "Uniswap Widget Integration",
-    url: "https://uniswap.org",
-    icons: config.appIcon ? [config.appIcon] : [],
-  };
-  
-  // Initialize AppKit with minimal features
-  createAppKit({
-    adapters: [wagmiAdapter],
-    projectId,
-    networks: [base],
-    debug: false,
-    enableCoinbase: false,
-    defaultNetwork: base,
-    metadata: metadata,
-    features: {
-      analytics: false,
-      email: false,
-      socials: [],
-      allWallets: false,
-      emailShowWallets: false,
-      swaps: false,
-    },
-    enableInjected: false,
-    showWallets: false,
-  });
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Provider
-        projectId={projectId}
+        projectId={config.projectId}
         networks={[base]}
       >
         <SwapWidget
