@@ -269,7 +269,7 @@ const SwapWidget: React.FC<SwapProps> = ({
             Number(state.inputAmount) <= 0
           }
           onClick={handleSwap}
-          className="w-full py-4 rounded-2xl transition-colors"
+          className="w-full py-4 rounded-2xl transition-colors cursor-pointer"
           style={{
             backgroundColor:
               state.loading ||
