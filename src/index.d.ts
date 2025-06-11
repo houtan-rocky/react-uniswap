@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { CreateConnectorFn, Config } from "wagmi";
-import type { AppKitNetwork } from "@reown/appkit/networks";
+import { CreateConnectorFn } from "wagmi";
+import { ProviderProps } from "./components/Provider";
 import type { Features } from "@reown/appkit/react";
 
 // Components
@@ -54,16 +54,7 @@ export interface AppKitMetadata {
   icons: string[];
 }
 
-export interface ProviderProps {
-  children: React.ReactNode;
-  config: Config;
-  projectId: string;
-  networks: [AppKitNetwork, ...AppKitNetwork[]];
-  defaultNetwork: AppKitNetwork;
-  metadata?: AppKitMetadata;
-  features?: AppKitFeatures;
-  ssr?: boolean;
-}
+export type { ProviderProps } from "./components/Provider";
 
 // Wagmi types
 export type { CreateConnectorFn };
